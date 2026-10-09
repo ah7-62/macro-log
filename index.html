@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#151515" />
+<meta name="description" content="Log meals with published UK nutrition figures first, then clearly labelled estimates." />
+<link rel="manifest" href="manifest.webmanifest" />
+<title>Macro Log</title>
+<style>
+:root { color-scheme:dark; --bg:#151515;--surface:#22221f;--input:#171715;--border:#383834;--text:#f1f0ed;--muted:#93918c;--green:#61bd94;--red:#df5c59;--amber:#efa934;--blue:#538ccb; }
+* {box-sizing:border-box} html {background:var(--bg);min-height:100%} body {margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;line-height:1.45} button,textarea,input {font:inherit} button {cursor:pointer} .app {width:min(100%,530px);padding:30px 16px 45px;margin:auto} .heading {font-size:29px;line-height:1.2;font-weight:750;letter-spacing:-.8px;margin:0 0 5px}.subtitle {color:var(--muted);font-size:17px;margin:0 0 20px}.day-nav {display:grid;grid-template-columns:48px 1fr 48px;gap:10px;align-items:center;text-align:center;margin-bottom:16px}.day-label {font-size:19px;font-weight:700}.nav-btn {height:45px;width:48px;background:#20201e;border:1px solid #353531;color:var(--text);border-radius:13px;font-size:29px;line-height:1;display:grid;place-items:center}.nav-btn:disabled {opacity:.33;cursor:default}.panel {border:1px solid var(--border);background:var(--surface);border-radius:19px;padding:17px;margin-bottom:15px}.totals {padding:20px 16px 16px}.energy {text-align:center;display:flex;align-items:baseline;justify-content:center;gap:10px;margin:0 0 17px}.energy-num {font-size:61px;line-height:1.3;font-weight:770;letter-spacing:-2.2px;font-variant-numeric:tabular-nums}.unit {font-size:17px;font-weight:650;color:var(--muted)}.macro-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.macro {background:#161615;border-radius:15px;padding:13px 3px 11px;text-align:center}.macro-value {font-size:24px;font-weight:750;letter-spacing:-.5px}.macro-name {font-size:14px;color:var(--muted);margin-top:4px}.protein {color:var(--red)}.carbs {color:var(--amber)}.fat {color:var(--blue)}.entry {padding:15px}.meal-input {display:block;width:100%;resize:vertical;min-height:92px;background:var(--input);color:var(--text);border:1px solid #3b3b37;border-radius:15px;padding:14px 15px;font-size:17px;outline:none;line-height:1.5}.meal-input::placeholder {color:#93928e}.meal-input:focus,.edit-input:focus {border-color:var(--green)}.add-btn {width:100%;margin-top:15px;background:var(--green);border:none;border-radius:13px;color:#fff;font-weight:720;font-size:18px;min-height:51px;transition:opacity .2s}.add-btn:hover {filter:brightness(1.05)}.add-btn:disabled {opacity:.6;cursor:wait}.message {display:none;margin:11px 3px 0;font-size:13px;color:#d6a972}.message.visible {display:block}.log {padding:16px 15px 7px}.log-head {display:flex;align-items:center;justify-content:space-between;margin:0 0 7px}.log-title {font-size:18px;font-weight:740}.clear {font-size:14px;color:var(--muted);text-decoration:underline;background:none;border:none;padding:6px 5px}.clear:disabled {opacity:.35;text-decoration:none;cursor:default}.log-actions{display:flex;gap:8px;align-items:center}.undo-btn{font-size:14px;font-weight:650;border:1px solid #5f9b80;background:#244637;color:#bcebd4;border-radius:9px;padding:7px 10px}.undo-btn:disabled{opacity:.3;cursor:default}.meal {display:grid;grid-template-columns:minmax(0,1fr) 32px;gap:5px;align-items:center;padding:13px 0 12px;border-bottom:1px solid #363632}.meal:last-child {border-bottom:none}.meal-detail {background:none;border:none;color:inherit;text-align:left;min-width:0;padding:0}.meal-name {font-size:16px;font-weight:650;overflow-wrap:anywhere}.meal-meta {font-size:13.5px;color:var(--muted);margin-top:2px;line-height:1.35}.delete {background:none;border:0;color:var(--muted);font-size:23px;line-height:1;min-height:36px;border-radius:8px}.delete:hover {color:var(--red)}.empty {text-align:center;color:var(--muted);padding:27px 6px 34px;font-size:15px}.help {font-size:12px;color:#7e7d78;text-align:center;margin:18px 11px 0}.help strong {font-weight:600;color:#b4b2ab}.modal-backdrop {position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;padding:15px;z-index:50}.modal-backdrop.open {display:flex}.modal {background:#252522;border:1px solid #50504b;border-radius:18px;padding:21px;width:min(100%,410px);max-height:90vh;overflow:auto}.modal h2 {margin:0 0 16px;font-size:21px}.edit-label {font-size:13px;color:#adaba5;display:block;margin:10px 0 5px}.edit-input {background:#171715;color:var(--text);border:1px solid #4b4a45;border-radius:9px;padding:10px;width:100%;outline:none}.edit-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 13px}.modal-actions {display:flex;gap:10px;margin-top:21px}.secondary {background:#3c3c38;color:#eee;border:0;border-radius:10px;flex:1;padding:12px}.save {background:var(--green);color:white;border:0;border-radius:10px;flex:1;padding:12px;font-weight:700} .sr-only {position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.footer-tools {display:flex;justify-content:center;gap:14px;margin:16px 0 0}.footer-tools button {color:#aaa8a0;background:none;border:none;font-size:12px;text-decoration:underline;padding:5px} .scan-btn {width:100%;min-height:48px;margin-top:10px;background:#30302d;color:#eeece8;border:1px solid #565650;border-radius:13px;font-weight:670;font-size:17px;display:flex;align-items:center;justify-content:center;gap:9px}.scan-btn:hover{background:#373732}.scan-icon{font-size:23px;letter-spacing:-5px;margin-right:5px}.scan-modal{width:min(100%,450px);padding:19px}.scan-header{display:flex;justify-content:space-between;align-items:center;gap:12px}.scan-header h2{margin:0 0 4px}.scan-close{background:#383835;border:0;border-radius:10px;width:35px;height:35px;flex-shrink:0;color:#dedbd7;font-size:25px;line-height:1}.scan-desc{color:#a9a6a0;font-size:13px;margin:0 0 15px}.camera-btn{margin-top:0;background:#41413d}.scanner-frame{margin:12px 0;overflow:hidden;border:1px solid #55534c;border-radius:12px;background:#171715;min-height:80px}.scanner-frame:empty{display:none}#barcodeReader{width:100%;overflow:hidden}#barcodeReader video{border-radius:10px}.barcode-divider{display:flex;align-items:center;gap:12px;color:#99958f;font-size:12px;margin:14px 0}.barcode-divider:before,.barcode-divider:after{content:'';height:1px;flex:1;background:#4a4944}.barcode-manual{display:flex;gap:8px}.barcode-manual input{min-width:0;flex:1}.lookup-btn{border:0;border-radius:9px;background:#454540;color:#fff;font-weight:600;padding:10px 14px}.scan-status{font-size:13px;min-height:20px;margin-top:10px;color:#b6d7c7;line-height:1.4}.scan-status.error{color:#ff9a91}.product-card{background:#1b1b19;border:1px solid #494943;border-radius:12px;padding:14px;margin-top:16px}.product-card h3{font-size:18px;margin:0 0 3px;overflow-wrap:anywhere}.product-brand{color:#aaa7a0;font-size:13px;margin:0 0 10px}.product-source{font-size:11.5px;color:#98968d}.product-source a{color:#b7dacb}.product-amount{margin:14px 0 10px;display:flex;align-items:center;gap:10px}.product-amount label{font-size:13px;color:#c8c6c0;flex:1}.product-amount input{max-width:105px;text-align:right}.portion-shortcuts{display:flex;gap:8px;margin:0 0 12px}.portion-shortcuts button{background:#33332f;border:1px solid #53534c;color:#dbdad6;padding:6px 10px;border-radius:9px;font-size:12px}.portion-shortcuts button:disabled{opacity:.4}.product-macros{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;text-align:center}.product-macros>div{border-radius:8px;background:#292925;padding:7px 1px}.product-macros strong{display:block;font-size:17px}.product-macros span{font-size:10px;color:#a5a39c}.product-per100{color:#95928b;font-size:11.5px;margin:12px 0 0}.add-scanned{margin-top:12px;min-height:48px;font-size:16px}.scan-modal input[type=number]{font-variant-numeric:tabular-nums} .lookup-indicator{font-size:12px;color:#b8d8c6;margin:10px 3px 0;line-height:1.45}.lookup-indicator.offline{color:#dfb583}.lookup-settings{margin-top:12px;border-top:1px solid var(--border);padding-top:10px;font-size:12px;color:var(--muted)}.lookup-settings summary{font-weight:650;cursor:pointer;color:#c4e3d2}.lookup-settings p{margin:9px 0;line-height:1.45}.lookup-settings label{display:block;margin:11px 0 4px}.lookup-settings .secondary{font-size:13px;padding:8px 12px;margin-top:8px;flex:none}.lookup-settings #lookupStatus{margin-top:8px;color:#bcbbb4}.meal-source{margin-top:5px;font-size:12px;color:#abaaa3}.meal-source a{color:#b5e8cc;overflow-wrap:anywhere}.source-dot{color:#726f69;padding:0 5px} [hidden]{display:none!important}
+@media(min-width:550px){.app{padding-top:47px}.heading{font-size:31px}.panel{margin-bottom:17px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app">
+<h1 class="heading">Macro Log</h1><p class="subtitle">Search official nutrition first. Estimate only if needed.</p>
+<div class="day-nav"><button class="nav-btn" id="prevDay" aria-label="Previous day">‹</button><div id="dayLabel" class="day-label">Today</div><button class="nav-btn" id="nextDay" aria-label="Next day">›</button></div>
+<section class="panel totals" aria-label="Daily totals"><div class="energy"><span id="kcal" class="energy-num">0</span><span class="unit">kcal</span></div><div class="macro-grid"><div class="macro"><div id="protein" class="macro-value protein">0g</div><div class="macro-name">Protein</div></div><div class="macro"><div id="carbs" class="macro-value carbs">0g</div><div class="macro-name">Carbs</div></div><div class="macro"><div id="fat" class="macro-value fat">0g</div><div class="macro-name">Fat</div></div></div></section>
+<section class="panel entry" aria-label="Add a meal"><form id="mealForm"><label for="mealText" class="sr-only">What did you eat?</label><textarea id="mealText" class="meal-input" rows="2" placeholder="e.g. 2 eggs scrambled with butter, 2 slices toast, black coffee" maxlength="1000" required></textarea><div style="display:flex;align-items:center;gap:9px;margin-top:12px;color:#c9c7bf;font-size:13px;flex-wrap:wrap"><label style="display:flex;align-items:center;gap:6px"><input id="autoOil" type="checkbox" checked> Auto-add rapeseed oil for fried steak, bacon & eggs</label><label style="display:flex;align-items:center;gap:5px">Oil per meal <input id="oilGrams" type="number" min="0" max="100" step="1" value="5" style="width:52px;background:#171715;color:white;border:1px solid #555;border-radius:7px;padding:5px">g</label></div><button class="add-btn" type="submit" id="addMeal">Add meal</button><button class="scan-btn" id="openBarcode" type="button"><span class="scan-icon" aria-hidden="true">▥</span>Scan barcode</button><div id="message" class="message" role="status"></div><div id="suggestions"></div></form>
+<div class="lookup-indicator" id="lookupBanner" role="status" aria-live="polite">Checking live-search connection…</div><details class="lookup-settings"><summary>Live web nutrition lookup settings</summary><p>When live search is connected, every typed meal is searched online <strong>before</strong> using saved nutrition data or an estimate. Official UK product values come first, then published independent values, then an editable estimate. Without the server function, this HTML cannot search the web by itself.</p><label for="lookupPasscode">Optional access code (only if you set NUTRITION_ACCESS_TOKEN on Netlify)</label><input class="edit-input" id="lookupPasscode" type="password" autocomplete="off" placeholder="Leave blank if none" maxlength="150"><button type="button" id="saveLookupPasscode" class="secondary">Save access code</button><div id="lookupStatus" aria-live="polite">Live search requires the Netlify function and an API key stored securely on the server.</div></details>
+</section>
+<section class="panel log" aria-label="Logged meals"><div class="log-head"><span class="log-title">Logged</span><div class="log-actions"><button class="undo-btn" id="undoDelete" type="button" disabled aria-label="Undo last deletion">↶ Undo</button><button class="clear" id="clearDay">Clear day</button></div></div><div id="oilDaily" style="display:none;color:#c1d8cb;font-size:13px;padding:8px 0;border-bottom:1px solid #363632"></div><div id="mealList"></div></section>
+<details class="panel" style="font-size:13px;color:#c5c3bd"><summary style="cursor:pointer;font-weight:700">Restaurant nutrition · search & coverage</summary><p style="color:#aaa">Includes UK KFC, McDonald’s, Pepe’s, Taco Bell and Pret products, listed individually below. Not the full menu of every chain. Pepe’s and KFC are official UK figures; McDonald’s and Taco Bell records are identified as independent-reference values. Menus change; check the official sources.</p><ul id="verifiedMenu" style="padding-left:21px"></ul></details><p class="help">When connected, each typed entry is checked online first. Published values include their source link; estimates are labelled and editable. If the search is unavailable, the app uses its saved nutrition records or makes a clearly labelled estimate.</p>
+<div class="footer-tools"><button id="exportData" type="button">Export data</button><button id="importData" type="button">Import backup</button><input type="file" id="importFile" accept="application/json,.json" hidden></div>
+</main>
+<div class="modal-backdrop" id="editBackdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="editHeading"><h2 id="editHeading">Edit meal</h2><form id="editForm"><label class="edit-label" for="editName">Meal</label><input class="edit-input" id="editName" maxlength="120" required><div class="edit-grid"><div><label class="edit-label" for="editKcal">Calories (kcal)</label><input class="edit-input" type="number" min="0" max="10000" step="1" id="editKcal" required></div><div><label class="edit-label" for="editProtein">Protein (g)</label><input class="edit-input" type="number" min="0" max="1000" step="0.1" id="editProtein" required></div><div><label class="edit-label" for="editCarbs">Carbs (g)</label><input class="edit-input" type="number" min="0" max="1000" step="0.1" id="editCarbs" required></div><div><label class="edit-label" for="editFat">Fat (g)</label><input class="edit-input" type="number" min="0" max="1000" step="0.1" id="editFat" required></div></div><div class="modal-actions"><button type="button" class="secondary" id="cancelEdit">Cancel</button><button type="submit" class="save">Save changes</button></div></form></div></div>
+<div class="modal-backdrop" id="scanBackdrop"><section class="modal scan-modal" role="dialog" aria-modal="true" aria-labelledby="scanHeading"><div class="scan-header"><h2 id="scanHeading">Scan barcode</h2><button type="button" class="scan-close" id="closeBarcode" aria-label="Close barcode scanner">×</button></div><p class="scan-desc">Point your iPhone camera at a food packet's barcode. Then choose how much you ate.</p><button type="button" class="scan-btn camera-btn" id="toggleCamera"><span class="scan-icon" aria-hidden="true">▥</span>Start camera</button><div class="scanner-frame" id="scannerFrame" hidden><div id="barcodeReader"></div></div><div class="barcode-divider">OR ENTER THE BARCODE NUMBER</div><form id="barcodeForm" class="barcode-manual"><label for="barcodeNumber" class="sr-only">Barcode number</label><input id="barcodeNumber" class="edit-input" type="text" inputmode="numeric" autocomplete="off" maxlength="14" placeholder="e.g. 3017624010701" required pattern="[0-9]{8,14}"><button type="submit" class="lookup-btn" id="lookupBarcode">Look up</button></form><div class="scan-status" role="status" id="scanStatus" aria-live="polite"></div><section class="product-card" id="productPreview" aria-label="Scanned product" hidden><h3 id="barcodeProductName"></h3><div class="product-brand" id="barcodeProductBrand"></div><div class="product-source">Source: <a id="barcodeProductLink" href="https://world.openfoodfacts.org" target="_blank" rel="noopener noreferrer">Open Food Facts</a> · Check the pack's nutrition label for accuracy.</div><div class="product-amount"><label for="portionGrams">Amount eaten (g or ml)</label><input class="edit-input" id="portionGrams" type="number" inputmode="decimal" min="1" max="10000" step="1" value="100"></div><div class="portion-shortcuts"><button type="button" id="portion100">100g / 100ml</button><button type="button" id="portionServing">1 serving</button></div><div class="product-macros"><div><strong id="barcodeKcal">0</strong><span>kcal</span></div><div><strong id="barcodeProtein" class="protein">0</strong><span>Protein (g)</span></div><div><strong id="barcodeCarbs" class="carbs">0</strong><span>Carbs (g)</span></div><div><strong id="barcodeFat" class="fat">0</strong><span>Fat (g)</span></div></div><p id="barcodePer100" class="product-per100"></p><button type="button" class="add-btn add-scanned" id="addBarcodeMeal">Add to day</button></section></section></div>
+<script>
+(()=>{'use strict';
+const STORE='macro-log-entries-v1';
+const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
+const shift=(key,days)=>{const [y,m,d]=key.split('-').map(Number);const date=new Date(y,m-1,d+days);return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;};
+let day=todayKey();let meals=[];let editingId=null;
+const $=id=>document.getElementById(id);
+const esc=str=>String(str).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const finite=(v,max=10000)=>Number.isFinite(Number(v))?Math.min(max,Math.max(0,Number(v))):0;
+const round=v=>Math.round(v);
+const nice=s=>s.trim().replace(/\s+/g,' ').replace(/\b[a-z]/g,c=>c.toUpperCase()).replace(/\b(G|Kg|Ml|Oz)\b/g,s=>s.toLowerCase());
+// Common food lookup: kcal, protein, carbohydrate and fat are approximate standard portions.
+const FOOD=[
+{a:['bacon rashers','bacon rasher','rashers of bacon','rasher of bacon','bacon'],u:1,g:35,k:105,p:7.7,c:.33,f:8.33},
+{a:['diced beef lean','lean diced beef','lean beef','beef steak','steak','beef'],g:100,k:165,p:26,c:0,f:6.7,d:150},
+{a:['chicken breast','roast chicken','grilled chicken','chicken'],g:100,k:165,p:31,c:0,f:3.6,d:150},
+{a:['turkey breast','turkey'],g:100,k:135,p:29,c:0,f:1.5,d:130},
+{a:['salmon fillet','smoked salmon','salmon'],g:100,k:208,p:20,c:0,f:13,d:130},
+{a:['tuna mayonnaise','tuna mayo'],g:100,k:190,p:15,c:2,f:14,d:100},
+{a:['tuna','tuna in spring water'],g:100,k:116,p:26,c:0,f:1,d:120},
+{a:['prawns','shrimp'],g:100,k:99,p:24,c:0,f:.3,d:130},
+{a:['cod','white fish','haddock'],g:100,k:90,p:20,c:0,f:1,d:150},
+{a:['pork chop','pork'],g:100,k:230,p:25,c:0,f:14,d:150},
+{a:['sausage','sausages'],u:1,g:60,k:170,p:8,c:3,f:14},
+{a:['egg','eggs'],u:1,g:55,k:72,p:6.3,c:.4,f:4.8},
+{a:['cheddar cheese','cheddar','cheese'],g:100,k:400,p:25,c:1.3,f:33,d:30},
+{a:['cottage cheese'],g:100,k:98,p:11,c:3.4,f:4.3,d:150},
+{a:['greek yogurt','greek yoghurt'],g:100,k:97,p:9,c:4,f:5,d:170},
+{a:['yogurt','yoghurt'],g:100,k:65,p:4,c:7,f:2,d:150},
+{a:['skimmed milk','skim milk'],g:100,k:35,p:3.6,c:5,f:.1,d:200},
+{a:['semi skimmed milk','semi-skimmed milk','milk'],g:100,k:47,p:3.5,c:4.8,f:1.8,d:200},
+{a:['butter'],g:100,k:717,p:.9,c:.1,f:81,d:10},
+{a:['olive oil','cooking oil','oil'],g:100,k:884,p:0,c:0,f:100,d:10},
+{a:['peanut butter'],g:100,k:588,p:25,c:20,f:50,d:20},
+{a:['almond butter'],g:100,k:614,p:21,c:19,f:56,d:20},
+{a:['mayonnaise','mayo'],g:100,k:680,p:1,c:1,f:75,d:15},
+{a:['bread slice','slices toast','slice toast','toast','bread'],u:1,g:40,k:95,p:3.5,c:18,f:1.3},
+{a:['bagel','bagels'],u:1,g:90,k:245,p:9,c:48,f:1.5},
+{a:['croissant','croissants'],u:1,g:60,k:240,p:5,c:26,f:13},
+{a:['wrap','tortilla wrap'],u:1,g:60,k:195,p:5.5,c:32,f:5},
+{a:['pita bread','pitta bread','pita','pitta'],u:1,g:60,k:165,p:5.5,c:33,f:.7},
+{a:['rice','white rice','brown rice'],g:100,k:130,p:2.7,c:28,f:.3,d:160},
+{a:['pasta','spaghetti'],g:100,k:155,p:5.8,c:30,f:.9,d:180},
+{a:['oats','oatmeal','porridge'],g:100,k:380,p:13,c:67,f:7,d:45},
+{a:['potatoes','potato','boiled potato'],g:100,k:87,p:2,c:20,f:.1,d:200},
+{a:['sweet potato','sweet potatoes'],g:100,k:86,p:1.6,c:20,f:.1,d:200},
+{a:['french fries','chips','fries'],g:100,k:310,p:3.5,c:41,f:15,d:150},
+{a:['avocado','avocados'],u:1,g:150,k:240,p:3,c:12,f:22},
+{a:['banana','bananas'],u:1,g:120,k:105,p:1.3,c:27,f:.4},
+{a:['apple','apples'],u:1,g:180,k:95,p:.5,c:25,f:.3},
+{a:['orange','oranges'],u:1,g:140,k:65,p:1.2,c:16,f:.2},
+{a:['strawberries','strawberry','mixed berries','berries','blueberries','raspberries'],g:100,k:50,p:1,c:12,f:.4,d:100},
+{a:['grapes'],g:100,k:69,p:.7,c:18,f:.2,d:120},
+{a:['almonds','almond'],g:100,k:579,p:21,c:22,f:50,d:30},
+{a:['walnuts','walnut'],g:100,k:654,p:15,c:14,f:65,d:30},
+{a:['mixed nuts','nuts'],g:100,k:607,p:20,c:21,f:54,d:30},
+{a:['broccoli'],g:100,k:34,p:3,c:7,f:.4,d:100},
+{a:['spinach'],g:100,k:23,p:2.9,c:3.6,f:.4,d:100},
+{a:['carrots','carrot'],g:100,k:41,p:1,c:10,f:.2,d:100},
+{a:['peas'],g:100,k:81,p:5.4,c:14,f:.4,d:100},
+{a:['salad','lettuce','mixed vegetables','vegetables','veg'],g:100,k:35,p:2,c:7,f:.3,d:150},
+{a:['tomatoes','tomato'],g:100,k:18,p:.9,c:4,f:.2,d:100},
+{a:['chickpeas','chickpea'],g:100,k:164,p:9,c:27,f:2.6,d:150},
+{a:['lentils','lentil'],g:100,k:116,p:9,c:20,f:.4,d:150},
+{a:['baked beans','beans'],g:100,k:94,p:5,c:15,f:.4,d:200},
+{a:['dark chocolate','chocolate'],g:100,k:560,p:8,c:50,f:38,d:30},
+{a:['protein powder','whey protein','protein shake'],u:1,g:30,k:120,p:24,c:3,f:1.5},
+{a:['black coffee','espresso','americano','coffee'],u:1,g:250,k:3,p:0,c:0,f:0},
+{a:['tea','black tea','green tea'],u:1,g:250,k:2,p:0,c:0,f:0},
+{a:['water','sparkling water'],u:1,g:250,k:0,p:0,c:0,f:0},
+{a:['orange juice','fruit juice','juice'],g:100,k:45,p:.7,c:10,f:.2,d:250},
+{a:['beer'],g:100,k:43,p:.5,c:3.6,f:0,d:330},
+{a:['red wine','white wine','wine'],g:100,k:82,p:.1,c:2.6,f:0,d:175},
+{a:['pizza'],u:1,g:125,k:285,p:12,c:36,f:10},
+{a:['burger','hamburger'],u:1,g:220,k:480,p:27,c:38,f:24},
+{a:['chicken curry','beef curry','vegetable curry','curry'],g:100,k:145,p:9,c:9,f:8,d:300},
+{a:['lasagne','lasagna'],g:100,k:160,p:9,c:12,f:9,d:350},
+{a:['spaghetti bolognese','bolognese'],g:100,k:145,p:10,c:17,f:4,d:350},
+{a:['sandwich'],u:1,g:180,k:320,p:16,c:36,f:12},
+{a:['soup'],g:100,k:60,p:2,c:9,f:2,d:300},
+{a:['cereal','cornflakes'],g:100,k:370,p:8,c:80,f:2,d:40},
+];
+const aliasIndex=FOOD.flatMap(food=>food.a.map(alias=>({alias,food}))).sort((a,b)=>b.alias.length-a.alias.length);
+function lookup(fragment){const lower=fragment.toLowerCase();return aliasIndex.find(({alias})=>new RegExp(`(^|[^a-z])${alias.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}($|[^a-z])`).test(lower))?.food;}
+function serving(fragment,food){
+ const txt=fragment.toLowerCase();let amount=null;
+ const weight=txt.match(/(\d+(?:\.\d+)?)\s*(kilograms?|kg|grams?|g|ounces?|oz|pounds?|lb|millilitres?|milliliters?|ml|litres?|liters?|l)\b/);
+ if(weight){let n=Number(weight[1]);let unit=weight[2];if(unit.startsWith('kg')||unit.startsWith('kilo'))n*=1000;else if(unit==='oz'||unit.startsWith('ounce'))n*=28.35;else if(unit==='lb'||unit.startsWith('pound'))n*=453.59;else if(unit==='l'||unit.startsWith('litre')||unit.startsWith('liter'))n*=1000;amount=n/food.g;}
+ if(amount===null){const spelled={a:1,an:1,one:1,two:2,three:3,four:4,five:5,six:6};const numeric=txt.match(/(?:^|\s)(\d+(?:\.\d+)?|a|an|one|two|three|four|five|six)\s+(?:(?:large|medium|small)\s+)?(?:(?:slices?|rashers?|cups?|pieces?|portions?|bowls?|cans?|tins?|tablespoons?|tbsp|teaspoons?|tsp|handfuls?|servings?)\s+(?:of\s+)?)?/);
+ let count=numeric?Number(numeric[1])||spelled[numeric[1]]:null;
+ if(count!==null){const isCup=/\bcups?\b/.test(txt),isTablespoon=/\b(?:tbsp|tablespoons?)\b/.test(txt),isTeaspoon=/\b(?:tsp|teaspoons?)\b/.test(txt),isSlice=/\bslices?\b/.test(txt),isHandful=/\bhandfuls?\b/.test(txt);
+  if(isCup)amount=(count*(food.a.some(x=>/rice|pasta|oats/.test(x))?160:240))/food.g;
+  else if(isTablespoon)amount=(count*15)/food.g;
+  else if(isTeaspoon)amount=(count*5)/food.g;
+  else if(isHandful)amount=(count*30)/food.g;
+  else if(isSlice&&!food.u)amount=(count*25)/food.g;
+  else amount=count*(food.u?1:(food.d||food.g)/food.g);
+ }
+ }
+ if(amount===null)amount=food.u?1:(food.d||food.g)/food.g;
+ if(/\bsmall\b/.test(txt))amount*=.8;else if(/\blarge\b/.test(txt))amount*=1.2;
+ return Math.min(amount,100);
+}
+// VERIFIED UK menu data: from the chain's own UK pages, not generic ingredients.
+// Coverage is deliberately limited. Do not silently invent values for other items.
+const VERIFIED_RESTAURANT=[
+ {menuName:'4 boneless chicken thighs',brand:'Nando’s',keys:/\b(?:nando'?s|nandos)\b/i,item:/\b(?:4|four)\s+(?:chicken\s+)?boneless\s+(?:chicken\s+)?thighs\b|\b(?:4|four)\s+(?:boneless\s+)?chicken\s+thighs\b/i,kcal:706,protein:85.5,carbs:0.3,fat:37.2,source:'Nando’s UK nutrition',url:'https://www.nandos.co.uk/food/menu/'},
+ {menuName:'Big Mac',brand:'McDonald’s',keys:/\b(?:mcdonald'?s|mcdonalds|maccies)\b/i,item:/\bbig\s*mac\b/i,kcal:509,protein:27,carbs:41,fat:25,source:'McDonald’s UK product page',url:'https://www.mcdonalds.com/gb/en-gb/product/big-mac.html'},
+ {menuName:'Sausage & Egg McMuffin',brand:'McDonald’s',keys:/\b(?:mcdonald'?s|mcdonalds|maccies)\b/i,item:/\bsausage\s*(?:and|&)\s*egg\s*mc\s*muffin\b/i,kcal:424,protein:25,carbs:27,fat:23,source:'McDonald’s UK product page',url:'https://www.mcdonalds.com/gb/en-gb/product/sausage-egg-mcmuffin.html'},
+ {menuName:'Large Cappuccino',brand:'McDonald’s',keys:/\b(?:mcdonald'?s|mcdonalds|maccies)\b/i,item:/\b(?:large\s+cappuccino|cappuccino\s+large)\b/i,kcal:124,protein:8.6,carbs:13,fat:4.3,source:'McDonald’s UK product page',url:'https://www.mcdonalds.com/gb/en-gb/product/cappuccino-large-200400.html'},
+ {menuName:'Regular Tea',brand:'McDonald’s',keys:/\b(?:mcdonald'?s|mcdonalds|maccies)\b/i,item:/\b(?:regular\s+tea|tea\s+regular)\b/i,kcal:6,protein:0.4,carbs:0.8,fat:0.2,source:'McDonald’s UK product page',url:'https://www.mcdonalds.com/gb/en-gb/product/tea-regular.html'},
+ {menuName:'Small Oasis',brand:'McDonald’s',keys:/\b(?:mcdonald'?s|mcdonalds|maccies)\b/i,item:/\b(?:small\s+oasis|oasis\s+small)\b/i,kcal:17,protein:0,carbs:4.1,fat:0,source:'McDonald’s UK product page',url:'https://www.mcdonalds.com/gb/en-gb/product/oasis-small-200244.html'},
+ {menuName:'Glaceau Smartwater 600ml',brand:'McDonald’s',keys:/\b(?:mcdonald'?s|mcdonalds|maccies)\b/i,item:/\b(?:600\s*ml\s+)?(?:smartwater|still\s+smartwater)\b/i,kcal:0,protein:0,carbs:0,fat:0,source:'McDonald’s UK product page',url:'https://www.mcdonalds.com/gb/en-gb/product/glaceau-smartwater-still-600ml.html'}
+];
+
+const MCD_BURGERS_SOURCE="https://www.mcdonaldscalories.com/uk/burgers";
+const MCD_BURGERS=[{"name": "Filet-O-Fish", "kcal": 316, "protein": 14, "carbs": 36, "fat": 13}, {"name": "Triple Cheeseburger", "kcal": 577, "protein": 37, "carbs": 33, "fat": 33}, {"name": "McPlant", "kcal": 426, "protein": 19, "carbs": 40, "fat": 20}, {"name": "Big Mac", "kcal": 509, "protein": 27, "carbs": 41, "fat": 25}, {"name": "McCrispy", "kcal": 484, "protein": 26, "carbs": 53, "fat": 18}, {"name": "Mayo Chicken", "kcal": 282, "protein": 12, "carbs": 36, "fat": 9.4}, {"name": "Bacon Double Cheeseburger", "kcal": 483, "protein": 31, "carbs": 32, "fat": 25}, {"name": "McChicken Sandwich", "kcal": 371, "protein": 17, "carbs": 41, "fat": 15}, {"name": "Cheeseburger", "kcal": 303, "protein": 16, "carbs": 30, "fat": 13}, {"name": "Double Cheeseburger", "kcal": 452, "protein": 27, "carbs": 31, "fat": 24}, {"name": "Quarter Pounder with Cheese", "kcal": 514, "protein": 31, "carbs": 36, "fat": 27}, {"name": "Hamburger", "kcal": 255, "protein": 13, "carbs": 29, "fat": 9.2}, {"name": "Double Quarter Pounder with Cheese", "kcal": 749, "protein": 50, "carbs": 36, "fat": 44}, {"name": "Bacon Mayo Chicken", "kcal": 329, "protein": 17, "carbs": 37, "fat": 12}, {"name": "Big Arch", "kcal": 1057, "protein": 57, "carbs": 54, "fat": 67}, {"name": "McSpicy", "kcal": 454, "protein": 25, "carbs": 49, "fat": 17}, {"name": "Double Filet-O-Fish", "kcal": 453, "protein": 24, "carbs": 45, "fat": 19}];
+// KFC official UK nutrition PDF, September 2026 (portion values); abbreviations normalised.
+const KFC_SOURCE='https://brand-uk.assets.kfc.co.uk/nutrition-allergens.pdf';
+const KFC_UK_ITEMS=[{"name":"Fillet Burger","kcal":463,"protein":28.8,"carbs":43.0,"fat":18.7},{"name":"Zinger Burger","kcal":468,"protein":23.0,"carbs":43.0,"fat":22.0},{"name":"Fillet Tower Burger","kcal":604,"protein":32.1,"carbs":55.5,"fat":27.0},{"name":"BBQ Fillet Tower Burger","kcal":612,"protein":32.1,"carbs":57.0,"fat":27.2},{"name":"Zinger Supercharger Tower Burger","kcal":652,"protein":26.2,"carbs":53.5,"fat":35.9},{"name":"Zinger Stacker Burger","kcal":813,"protein":45.1,"carbs":60.9,"fat":42.3},{"name":"Mini Burger","kcal":277,"protein":18.0,"carbs":28.0,"fat":10.0},{"name":"Kids Burger","kcal":258,"protein":18.0,"carbs":30.0,"fat":7.0},{"name":"Vegan Burger","kcal":396,"protein":15.0,"carbs":41.0,"fat":17.0},{"name":"Original Recipe Chicken Fillet Roll","kcal":662,"protein":28.6,"carbs":78.7,"fat":24.5},{"name":"Zinger Fillet Roll","kcal":751,"protein":23.0,"carbs":81.0,"fat":36.0},{"name":"BBQ Fillet Stacker Burger","kcal":814,"protein":56.6,"carbs":59.2,"fat":37.9},{"name":"Kentucky Mayo Twister","kcal":520,"protein":28.4,"carbs":46.1,"fat":24.0},{"name":"Sweet Chilli Twister","kcal":492,"protein":28.7,"carbs":53.1,"fat":17.6},{"name":"Smokey BBQ Twister","kcal":482,"protein":28.7,"carbs":51.2,"fat":17.4},{"name":"Supercharger Twister","kcal":548,"protein":29.1,"carbs":47.8,"fat":26.0},{"name":"Flamin Mini Wrap","kcal":325,"protein":17.6,"carbs":28.5,"fat":15.3},{"name":"BBQ Mini Wrap","kcal":294,"protein":17.6,"carbs":30.9,"fat":10.8},{"name":"Original Ranch Rice Bowl","kcal":558,"protein":28.8,"carbs":62.8,"fat":19.7},{"name":"Zinger Ranch Rice Bowl","kcal":543,"protein":23.0,"carbs":61.6,"fat":21.3},{"name":"Veggie Ranch Rice Bowl","kcal":371,"protein":7.5,"carbs":59.7,"fat":9.5},{"name":"Original Recipe Chicken (per piece)","kcal":241,"protein":22.0,"carbs":8.6,"fat":13.0},{"name":"Small Popcorn Chicken","kcal":142,"protein":8.3,"carbs":8.3,"fat":8.3},{"name":"Regular Popcorn Chicken","kcal":307,"protein":18.0,"carbs":18.0,"fat":18.0},{"name":"Large Popcorn Chicken","kcal":478,"protein":28.0,"carbs":28.0,"fat":28.0},{"name":"Hot Wing (per piece)","kcal":91,"protein":4.9,"carbs":3.8,"fat":6.2},{"name":"Tender (per piece)","kcal":125,"protein":13.1,"carbs":5.8,"fat":5.4},{"name":"Sweet Chilli Dripd Bites","kcal":348,"protein":19.1,"carbs":36.8,"fat":13.5},{"name":"Kansas BBQ Dripd Bites","kcal":301,"protein":15.8,"carbs":34.7,"fat":10.8},{"name":"Regular Signature Fries","kcal":261,"protein":3.1,"carbs":38.0,"fat":9.8},{"name":"Large Signature Fries","kcal":372,"protein":4.4,"carbs":54.0,"fat":14.0},{"name":"Regular BBQ Beans","kcal":93,"protein":4.7,"carbs":15.1,"fat":0.6},{"name":"Large BBQ Beans","kcal":199,"protein":10.0,"carbs":32.0,"fat":1.4},{"name":"Regular Coleslaw","kcal":150,"protein":1.1,"carbs":6.1,"fat":13.0},{"name":"Large Coleslaw","kcal":299,"protein":2.2,"carbs":12.0,"fat":26.0},{"name":"Corn Cobette","kcal":57,"protein":2.2,"carbs":8.1,"fat":1.3},{"name":"2 Corn Cobettes","kcal":115,"protein":4.4,"carbs":16.0,"fat":2.7},{"name":"Regular Gravy","kcal":73,"protein":1.7,"carbs":8.4,"fat":3.5},{"name":"Large Gravy","kcal":166,"protein":3.9,"carbs":19.0,"fat":8.0},{"name":"Regular Creamy Mash","kcal":124,"protein":2.4,"carbs":20.0,"fat":3.4},{"name":"Large Creamy Mash","kcal":248,"protein":4.8,"carbs":40.0,"fat":6.8},{"name":"Cajun Dirty Rice","kcal":217,"protein":3.8,"carbs":43.0,"fat":2.6},{"name":"Side Salad","kcal":56,"protein":0.8,"carbs":4.7,"fat":3.6},{"name":"Dirty Loaded Fries","kcal":473,"protein":11.8,"carbs":53.1,"fat":22.7},{"name":"Cheese Slice","kcal":38,"protein":2.2,"carbs":0.5,"fat":3.1},{"name":"Hash Brown","kcal":92,"protein":0.9,"carbs":8.8,"fat":5.5},{"name":"Oreo Krushems Shake","kcal":272,"protein":4.1,"carbs":41.0,"fat":10.0},{"name":"MilkyBar Krushems Shake","kcal":315,"protein":6.4,"carbs":43.0,"fat":13.0},{"name":"Aero Peppermint Krushem Shake","kcal":280,"protein":3.9,"carbs":41.0,"fat":11.0},{"name":"Raspberry Ripple Krushem Shake","kcal":262,"protein":4.6,"carbs":36.0,"fat":11.0},{"name":"3 Mega Mozza Sticks","kcal":333,"protein":14.9,"carbs":27.6,"fat":17.7},{"name":"Mozzamelt Fillet Burger","kcal":742,"protein":41.8,"carbs":64.6,"fat":34.0},{"name":"Mozzamelt Zinger Burger","kcal":718,"protein":34.8,"carbs":63.0,"fat":35.3},{"name":"Kentucky Original Wrap","kcal":516,"protein":31.2,"carbs":44.3,"fat":23.3},{"name":"Mini Chocolate Sundae","kcal":138,"protein":2.5,"carbs":20.0,"fat":5.3},{"name":"Oreo Sundae","kcal":256,"protein":4.1,"carbs":38.0,"fat":9.6},{"name":"Milkybar Sundae","kcal":296,"protein":5.7,"carbs":39.0,"fat":13.0},{"name":"Raspberry Ripple Sundae","kcal":276,"protein":5.0,"carbs":37.0,"fat":12.0},{"name":"Milk Chocolate Cookie","kcal":284,"protein":2.9,"carbs":36.3,"fat":13.8},{"name":"White Chocolate Cookie","kcal":283,"protein":2.7,"carbs":36.0,"fat":14.0},{"name":"Cherry Boba Refresher","kcal":114,"protein":0.5,"carbs":27.3,"fat":0.5},{"name":"Strawberry Boba Refresher","kcal":148,"protein":0.5,"carbs":35.3,"fat":0.5},{"name":"Sparkling Raspberry Lemonade","kcal":99,"protein":0.5,"carbs":21.9,"fat":0.5},{"name":"Sparkling Cloudy Lemonade","kcal":24,"protein":0.5,"carbs":4.3,"fat":0.5},{"name":"Iced Latte","kcal":102,"protein":6.6,"carbs":11.8,"fat":3.1},{"name":"Iced Tiramisu Latte","kcal":215,"protein":7.1,"carbs":39.2,"fat":3.3},{"name":"Iced Caramel Latte","kcal":166,"protein":6.4,"carbs":27.9,"fat":3.2},{"name":"Iced Vanilla Latte","kcal":111,"protein":6.4,"carbs":14.2,"fat":3.2},{"name":"Vanilla Iced Matcha","kcal":87,"protein":6.3,"carbs":9.4,"fat":2.7},{"name":"Strawberry Shortcake Iced Matcha","kcal":264,"protein":0.5,"carbs":44.0,"fat":6.4},{"name":"Oatly Iced Latte","kcal":122,"protein":2.8,"carbs":15.3,"fat":5.5},{"name":"Oatly Iced Caramel Latte","kcal":244,"protein":2.4,"carbs":43.8,"fat":6.3},{"name":"Oatly Iced Tiramisu Latte","kcal":175,"protein":2.8,"carbs":27.4,"fat":5.7},{"name":"Oatly Iced Vanilla Latte","kcal":134,"protein":2.1,"carbs":18.3,"fat":5.5},{"name":"Oatly Vanilla Iced Matcha","kcal":112,"protein":2.7,"carbs":13.5,"fat":4.9},{"name":"Oatly Strawberry Shortcake Iced Matcha","kcal":283,"protein":3.5,"carbs":47.5,"fat":8.4},{"name":"Caramel Krunch Shake","kcal":490,"protein":6.9,"carbs":82.9,"fat":14.3},{"name":"Chocolate Krunch Shake","kcal":484,"protein":6.9,"carbs":82.4,"fat":13.8},{"name":"Strawberry Shortcake Krunch Shake","kcal":481,"protein":6.6,"carbs":83.1,"fat":13.3}];
+// Other published official records with complete per-serving macros.
+const EXTRA_OFFICIAL_ITEMS=[
+ {name:'Chicken Salad',brand:'Pret',kcal:529,protein:21.8,carbs:42.7,fat:29.3,url:'https://www.pret.co.uk/en-GB/products/UK020107/chicken-salad'}
+];
+function normItem(s){return s.toLowerCase().normalize('NFKD').replace(/&/g,' and ').replace(/[^a-z0-9]+/g,' ').replace(/\b(?:the|a|an)\b/g,' ').replace(/\s+/g,' ').trim();}
+function officialItemEstimate(input){
+ const kfc=/\bk\s*f\s*c\b/i.test(input);
+ const pret=/\bpret(?:\s+a\s+manger)?\b/i.test(input);
+ const mcd=/\b(?:mcdonald[’'?]?s|mcdonalds|maccies)\b/i.test(input);
+ if(!kfc&&!pret&&!mcd)return undefined;
+ const arr=kfc?KFC_UK_ITEMS:mcd?MCD_BURGERS:EXTRA_OFFICIAL_ITEMS;
+ const withoutChain=input.replace(kfc?/\bk\s*f\s*c\b/ig:mcd?/\b(?:mcdonald[’'?]?s|mcdonalds|maccies)\b/ig:/\bpret(?:\s+a\s+manger)?\b/ig,'').trim();
+ const clean=normItem(withoutChain).replace(/\b(?:from|at|of)\b/g,' ').replace(/\s+/g,' ').trim();
+ const choices=[];
+ for(const r of arr){
+  const name=normItem(r.name).replace(/ per piece/g,'').trim();
+  // Only exact menu titles, optionally with a numeric count before or after.
+  const esc=name;
+  const match=clean.match(new RegExp('^(?:([0-9]+) )?'+esc+'s?(?: ([0-9]+))?$'));
+  if(match){const n=Number(match[1]||match[2]||1);if(n>0&&n<=30)choices.push({r,n});}
+ }
+ if(choices.length!==1)return null;
+ const {r,n}=choices[0];const url=kfc?KFC_SOURCE:mcd?MCD_BURGERS_SOURCE:r.url;
+ return {name:nice(input),kcal:Math.round(r.kcal*n),protein:Math.round(r.protein*n*10)/10,carbs:Math.round(r.carbs*n*10)/10,fat:Math.round(r.fat*n*10)/10,warning:`${mcd?'Independent UK McDonald’s nutrition reference (not official McDonald’s website)':'Official '+(kfc?'KFC':'Pret')+' UK data'} (${n} × ${r.name}); excludes extras. Source: ${url}`};
+}
+const CHAIN_NAME_PATTERN=/\b(?:nando'?s|nandos|mcdonald'?s|mcdonalds|maccies|kfc|popeye'?s|burger\s*king|subway|greggs|pret|wagamama|pizza\s*express|domino'?s|five\s*guys|starbucks|costa|taco\s*bell|leon|itsu|chipotle|wendy'?s|shake\s*shack|tortilla|german\s*doner\s*kebab|chopstix)\b/i;
+function restaurantEstimate(input){
+ if(!CHAIN_NAME_PATTERN.test(input))return undefined;
+ const candidates=VERIFIED_RESTAURANT.filter(r=>r.keys.test(input)&&r.item.test(input));
+ if(candidates.length!==1)return null;
+ const r=candidates[0];
+ // Guard against attributing single-item values to a full meal, altered recipe, or additional sides.
+ const rest=input.replace(r.keys,' ').replace(r.item,' ').replace(/\b(?:one|1|from|at|a|an|the|medium\s*heat|peri\s*peri)\b/gi,' ').replace(/[.,!?'’\-]/g,' ').trim();
+ const qty=rest.match(/^(\d+)$/);let count=qty?Number(qty[1]):1;
+ if(count<1||count>20||(!qty&&rest.length))return null;
+ return {name:nice(input),kcal:Math.round(r.kcal*count),protein:Math.round(r.protein*count*10)/10,carbs:Math.round(r.carbs*count*10)/10,fat:Math.round(r.fat*count*10)/10,warning:`Official UK nutrition, ${count} × ${r.brand} ${r.source}. Excludes extras. Check: ${r.url}`};
+}
+document.addEventListener('DOMContentLoaded',()=>{const ul=document.getElementById('verifiedMenu');if(ul)ul.innerHTML=VERIFIED_RESTAURANT.map(r=>`<li style="margin:8px 0">${r.brand}: <a href="${r.url}" target="_blank" rel="noopener" style="color:#95dabb">${r.menuName||r.brand}</a> — ${r.kcal} kcal, P${r.protein} C${r.carbs} F${r.fat}</li>`).join('')+`<li><strong>McDonald’s UK — ${MCD_BURGERS.length} burger items</strong> (<a href="${MCD_BURGERS_SOURCE}" target="_blank" rel="noopener" style="color:#95dabb">Independent nutrition reference; not McDonald’s official page</a>)</li>`+MCD_BURGERS.map(r=>`<li>McDonald’s ${r.name} — ${r.kcal} kcal, P${r.protein} C${r.carbs} F${r.fat}</li>`).join('')+`<li><strong>KFC UK — ${KFC_UK_ITEMS.length} items</strong> (<a href="${KFC_SOURCE}" target="_blank" rel="noopener" style="color:#95dabb">September 2026 official PDF</a>)</li>`+KFC_UK_ITEMS.map(r=>`<li>${r.name} — ${r.kcal} kcal, P${r.protein} C${r.carbs} F${r.fat}</li>`).join('')+EXTRA_OFFICIAL_ITEMS.map(r=>`<li>${r.brand}: <a href="${r.url}" target="_blank" rel="noopener" style="color:#95dabb">${r.name}</a> — ${r.kcal} kcal, P${r.protein} C${r.carbs} F${r.fat}</li>`).join('');});
+
+// Greggs UK's official nutrition listing for the 103g Sausage Roll: 347 kcal, P9.1g C24g F24g.
+const GREGGS_SOURCE='https://www.greggs.com/menu/product/sausage-roll-1000446/';
+const GREGGS_OFFICIAL_ITEMS=[{name:'Sausage Roll',kcal:347,protein:9.1,carbs:24,fat:24}];
+// Published independent UK nutrition values; regular assumed unless size is specified.
+const NANDOS_CHIPS_SOURCE='https://www.nutracheck.co.uk/CaloriesIn/Product/29/Nando%27s%2BPeri-Salted%2BChips';
+const NANDOS_CHIPS_ITEMS=[
+ {name:'PERi-Salted Chips Regular',aliases:['peri peri fries','peri peri chips','peri salted fries','peri salted chips','peri chips','peri fries','fries','chips'],kcal:450,protein:6.6,carbs:68.9,fat:18},
+ {name:'PERi-Salted Chips Large',aliases:['large peri peri fries','large peri peri chips','large peri salted chips','large peri salted fries','large peri chips','large peri fries','large fries','large chips'],kcal:1125,protein:16.5,carbs:172.2,fat:45}
+];
+// Additional per-serving menu records. Names and source category are visible in the coverage browser.
+const PEPE_UK_SOURCE='https://pepes.co.uk/nutrition-allergens-uk/';
+const TACO_UK_LINK='https://www.tacobell.co.uk/nutrition-information/';
+const TACO_INDEPENDENT_SOURCE='https://tacobellmenuuk.com/calories-nutrition/';
+const MCD_INDEPENDENT_SOURCE='https://www.mcdonaldscalories.com/uk';
+const PEPE_UK_ITEMS=[{"name":"1/2 Chicken","kcal":798.0,"protein":125.6,"carbs":2.5,"fat":32.0},{"name":"1/4 Chicken","kcal":399.0,"protein":62.8,"carbs":1.3,"fat":16.0},{"name":"7 Up Free 1.5L","kcal":30.0,"protein":0.0,"carbs":1.5,"fat":0.0},{"name":"7UP Fountain Large","kcal":13.0,"protein":0.0,"carbs":0.6,"fat":0.0},{"name":"7UP Fountain Regular","kcal":9.0,"protein":0.0,"carbs":0.5,"fat":0.0},{"name":"Barr Cola","kcal":46.0,"protein":0.0,"carbs":11.9,"fat":0.0},{"name":"BBQ Chicken & Cheese Melt","kcal":622.0,"protein":44.3,"carbs":55.8,"fat":26.0},{"name":"BBQ Paneer & Cheese Melt","kcal":697.0,"protein":31.1,"carbs":57.4,"fat":38.9},{"name":"BBQ Quesadilla","kcal":434.0,"protein":31.4,"carbs":47.8,"fat":12.2},{"name":"BBQ Wrap","kcal":388.0,"protein":27.3,"carbs":39.9,"fat":13.0},{"name":"Bottled Water","kcal":0.0,"protein":0.0,"carbs":0.0,"fat":0.0},{"name":"Cheese Slice","kcal":42.0,"protein":2.1,"carbs":0.8,"fat":3.3},{"name":"Chick n Rice","kcal":556.0,"protein":31.2,"carbs":76.8,"fat":13.6},{"name":"Chicken Box","kcal":739.0,"protein":56.8,"carbs":70.7,"fat":24.9},{"name":"Chicken Burger","kcal":383.0,"protein":15.7,"carbs":38.4,"fat":19.3},{"name":"Chicken Burger Double","kcal":563.0,"protein":26.9,"carbs":51.9,"fat":29.6},{"name":"Chicken Burrito","kcal":353.0,"protein":22.0,"carbs":48.7,"fat":7.4},{"name":"Chicken Cheese & Tomato Salsa Melt","kcal":560.0,"protein":44.2,"carbs":40.6,"fat":25.8},{"name":"Chicken Fajita Wrap","kcal":785.0,"protein":43.6,"carbs":54.1,"fat":42.9},{"name":"Chicken Nachos","kcal":790.0,"protein":35.0,"carbs":67.6,"fat":40.9},{"name":"Chicken Nuggets 5","kcal":268.0,"protein":17.8,"carbs":19.5,"fat":15.0},{"name":"Chicken Nuggets 8","kcal":429.0,"protein":28.5,"carbs":31.3,"fat":23.9},{"name":"Chicken Quesadilla","kcal":395.0,"protein":31.3,"carbs":38.4,"fat":12.1},{"name":"Chicken Salad","kcal":120.0,"protein":23.3,"carbs":4.6,"fat":1.4},{"name":"Chicken Tasca","kcal":476.0,"protein":32.7,"carbs":52.5,"fat":16.2},{"name":"Chicken XL","kcal":443.0,"protein":39.2,"carbs":43.8,"fat":12.1},{"name":"Chilli Cheese Nuggets","kcal":237.0,"protein":7.2,"carbs":20.3,"fat":13.8},{"name":"Chimichurri Fries Large","kcal":423.0,"protein":5.1,"carbs":68.6,"fat":12.5},{"name":"Chimichurri Fries Regular","kcal":282.0,"protein":3.4,"carbs":45.7,"fat":8.3},{"name":"Chimichurri Wedges","kcal":247.0,"protein":4.6,"carbs":34.1,"fat":9.3},{"name":"Chocolate Fudge Brownie 100ml","kcal":183.0,"protein":3.1,"carbs":22.0,"fat":8.9},{"name":"Chocolate Fudge Brownie 465ml","kcal":853.0,"protein":14.3,"carbs":102.5,"fat":41.5},{"name":"Combo Serves 2 to 3","kcal":1979.0,"protein":152.9,"carbs":140.9,"fat":88.4},{"name":"Cookie Dough 100ml","kcal":273.0,"protein":4.1,"carbs":31.0,"fat":15.0},{"name":"Cookie Dough 465ml","kcal":1268.0,"protein":16.3,"carbs":144.0,"fat":69.9},{"name":"Corn on the Cob","kcal":232.0,"protein":15.4,"carbs":39.3,"fat":0.9},{"name":"Hot Sauce 10ml","kcal":29.0,"protein":0.1,"carbs":1.8,"fat":2.4},{"name":"Hot & Spicy Quesadilla","kcal":417.0,"protein":31.3,"carbs":43.6,"fat":12.5},{"name":"IRN BRU Fountain Large","kcal":130.0,"protein":3.1,"carbs":30.0,"fat":0.0},{"name":"IRN BRU Fountain Regular","kcal":95.0,"protein":2.3,"carbs":21.8,"fat":0.0},{"name":"J2O Apple & Mango","kcal":50.0,"protein":0.0,"carbs":11.0,"fat":0.0},{"name":"J2O Orange & Passionfruit","kcal":55.0,"protein":0.0,"carbs":11.8,"fat":0.0},{"name":"Kids Meal Chicken Burger","kcal":652.0,"protein":18.3,"carbs":81.3,"fat":27.5},{"name":"Paneer Loaded Fries","kcal":971.0,"protein":34.3,"carbs":76.3,"fat":56.0},{"name":"Paneer Nachos","kcal":1039.0,"protein":39.3,"carbs":68.1,"fat":65.4},{"name":"Paneer Rice","kcal":688.0,"protein":26.4,"carbs":64.5,"fat":35.1},{"name":"Paneer Salad","kcal":228.0,"protein":13.6,"carbs":5.2,"fat":16.8},{"name":"Paneer Wrap","kcal":581.0,"protein":24.0,"carbs":36.0,"fat":36.4},{"name":"Pepsi Fountain Large","kcal":256.0,"protein":0.0,"carbs":68.8,"fat":0.0},{"name":"Pepsi Fountain Regular","kcal":186.0,"protein":0.0,"carbs":49.9,"fat":0.0},{"name":"Pepsi 1.5L","kcal":615.0,"protein":1.5,"carbs":165.0,"fat":0.0},{"name":"Pepsi Max Fountain Large","kcal":2.0,"protein":0.0,"carbs":0.0,"fat":0.0},{"name":"Pepsi Max Fountain Regular","kcal":1.0,"protein":0.0,"carbs":0.0,"fat":0.0},{"name":"Pitta Bread","kcal":193.0,"protein":7.0,"carbs":38.8,"fat":0.6},{"name":"Prime Pitta","kcal":412.0,"protein":38.8,"carbs":41.7,"fat":9.6},{"name":"Red Bull Sugar Free","kcal":8.0,"protein":0.0,"carbs":0.0,"fat":0.0},{"name":"Red Bull","kcal":115.0,"protein":0.0,"carbs":27.5,"fat":0.0},{"name":"Rubicon Mango Sparkling","kcal":56.0,"protein":0.0,"carbs":13.5,"fat":0.0},{"name":"Veggie Burger Double","kcal":721.0,"protein":13.9,"carbs":92.9,"fat":31.4},{"name":"Veggie Burger Single","kcal":514.0,"protein":10.5,"carbs":68.4,"fat":21.9},{"name":"Wedges","kcal":225.0,"protein":3.8,"carbs":30.0,"fat":9.2},{"name":"Whole Chicken","kcal":1596.0,"protein":251.2,"carbs":5.0,"fat":64.0},{"name":"Family Platter Serves 3 to 4","kcal":3397.0,"protein":287.3,"carbs":217.3,"fat":149.9},{"name":"Feta Salad","kcal":136.0,"protein":6.9,"carbs":8.2,"fat":8.6},{"name":"Fries Large","kcal":390.0,"protein":3.9,"carbs":62.4,"fat":12.3},{"name":"Fries Regular","kcal":259.0,"protein":2.6,"carbs":41.6,"fat":8.2},{"name":"Fruit Shoot Apple & Blackcurrant","kcal":8.0,"protein":0.0,"carbs":1.6,"fat":0.0},{"name":"Gourmet Beef Burger Double","kcal":1361.0,"protein":71.3,"carbs":52.1,"fat":96.6},{"name":"Korean Beef Burger Single","kcal":881.0,"protein":39.6,"carbs":52.3,"fat":57.4},{"name":"Korean Lamb Burger Double","kcal":1189.0,"protein":71.9,"carbs":52.3,"fat":77.8},{"name":"Korean Lamb Burger Single","kcal":814.0,"protein":40.8,"carbs":51.4,"fat":50.1},{"name":"Lemon & Herb Sauce 10ml","kcal":31.0,"protein":0.1,"carbs":1.8,"fat":2.5},{"name":"Loaded Fries Chicken","kcal":755.0,"protein":37.3,"carbs":75.5,"fat":32.5},{"name":"Loaded Fries Plain","kcal":658.0,"protein":15.4,"carbs":75.2,"fat":31.1},{"name":"Mango & Lime Sauce 10ml","kcal":31.0,"protein":0.1,"carbs":2.9,"fat":2.1},{"name":"Pepe’s Extra Hot Sauce","kcal":39.0,"protein":0.8,"carbs":4.3,"fat":1.1},{"name":"Pepe’s Garlic Mayo","kcal":189.0,"protein":0.7,"carbs":1.4,"fat":20.2},{"name":"Pepe’s Original","kcal":1596.0,"protein":251.2,"carbs":5.0,"fat":64.0},{"name":"Pepe’s Piri Piri Mayo","kcal":178.0,"protein":0.7,"carbs":7.2,"fat":16.4},{"name":"Pepe’s Strawberry Cheesecake","kcal":315.0,"protein":7.5,"carbs":38.2,"fat":14.7},{"name":"Pepe’s Sweet Chilli Sauce","kcal":53.0,"protein":1.0,"carbs":11.2,"fat":0.2},{"name":"Pepe’s Wings 3","kcal":133.0,"protein":14.2,"carbs":1.4,"fat":8.1},{"name":"Pepe’s Wings 5","kcal":221.0,"protein":23.7,"carbs":2.2,"fat":13.5},{"name":"Piri Piri Corn on the Cob","kcal":290.0,"protein":15.8,"carbs":42.8,"fat":5.8},{"name":"Piri Piri Fries Large","kcal":418.0,"protein":4.6,"carbs":68.1,"fat":12.8},{"name":"Solo Platter Serves 1","kcal":1178.0,"protein":86.7,"carbs":84.8,"fat":52.8},{"name":"Spicy Rice","kcal":377.0,"protein":7.7,"carbs":63.3,"fat":10.1},{"name":"Tender Strips 3","kcal":100.0,"protein":22.1,"carbs":0.3,"fat":1.4},{"name":"Tender Strips 5","kcal":166.0,"protein":36.7,"carbs":0.4,"fat":2.2},{"name":"Wings X 18","kcal":791.0,"protein":84.8,"carbs":8.2,"fat":48.9}];
+const TACO_INDEPENDENT_ITEMS=[{"name":"Cheesy Topped Fries","kcal":445.0,"protein":6.2,"carbs":52.3,"fat":23.1},{"name":"Fries Bell Grande","kcal":598.0,"protein":18.4,"carbs":54.7,"fat":32.6},{"name":"Fries Supreme","kcal":512.0,"protein":9.1,"carbs":53.8,"fat":28.4},{"name":"Seasoned Fries","kcal":312.0,"protein":4.8,"carbs":48.2,"fat":11.3},{"name":"Grilled Cheese Burrito","kcal":742.0,"protein":28.6,"carbs":68.4,"fat":38.2},{"name":"New Caramel Apple Empanada","kcal":284.0,"protein":3.2,"carbs":42.1,"fat":11.8},{"name":"New Grilled Cheese Burrito Meal","kcal":1156.0,"protein":32.4,"carbs":126.7,"fat":52.3},{"name":"New Grilled Cheese Quesadilla Meal","kcal":1088.0,"protein":35.8,"carbs":118.2,"fat":48.6},{"name":"New Grilled Cheese Crunchwrap Supreme Meal","kcal":1124.0,"protein":31.7,"carbs":122.4,"fat":50.1},{"name":"New Grilled Cheese Deluxe Box","kcal":1398.0,"protein":42.3,"carbs":148.6,"fat":62.4},{"name":"Crispy Chicken Burrito","kcal":586.0,"protein":22.4,"carbs":56.3,"fat":28.7},{"name":"Crunchwrap Supreme","kcal":538.0,"protein":18.2,"carbs":52.6,"fat":26.4},{"name":"Quesadilla","kcal":512.0,"protein":24.8,"carbs":38.7,"fat":28.3},{"name":"Volcano Burrito","kcal":624.0,"protein":24.1,"carbs":62.8,"fat":30.2},{"name":"Crunchy Taco","kcal":178.0,"protein":8.6,"carbs":14.2,"fat":9.8},{"name":"Crunchy Taco Supreme","kcal":212.0,"protein":9.4,"carbs":15.8,"fat":12.1},{"name":"Crispy Chicken Burrito Meal","kcal":1020.0,"protein":42.0,"carbs":112.0,"fat":44.0},{"name":"Cheesy Gordita Crunch Combo","kcal":1080.0,"protein":36.0,"carbs":120.0,"fat":50.0},{"name":"Beefy Melt Burrito Combo","kcal":950.0,"protein":34.0,"carbs":98.0,"fat":46.0},{"name":"Naked Chicken Taco Meal","kcal":890.0,"protein":40.0,"carbs":85.0,"fat":42.0},{"name":"Crunchwrap Supreme Meal","kcal":1040.0,"protein":36.0,"carbs":115.0,"fat":48.0},{"name":"Volcano Burrito Meal","kcal":1100.0,"protein":38.0,"carbs":122.0,"fat":51.0},{"name":"Two Taco Supreme Meal","kcal":720.0,"protein":28.0,"carbs":78.0,"fat":32.0},{"name":"Quesadilla Meal","kcal":920.0,"protein":30.0,"carbs":95.0,"fat":44.0},{"name":"Chalupa Supreme Meal","kcal":980.0,"protein":34.0,"carbs":105.0,"fat":46.0},{"name":"Burrito Meal For 2","kcal":1850.0,"protein":62.0,"carbs":198.0,"fat":82.0},{"name":"Soft Taco","kcal":180.0,"protein":9.0,"carbs":18.0,"fat":8.0},{"name":"Soft Taco Supreme","kcal":210.0,"protein":10.0,"carbs":19.0,"fat":10.0},{"name":"Crispy Chicken Soft Taco","kcal":160.0,"protein":7.0,"carbs":16.0,"fat":8.0},{"name":"Naked Chicken Taco","kcal":340.0,"protein":14.0,"carbs":15.0,"fat":18.0},{"name":"Beefy Melt Burrito","kcal":620.0,"protein":24.0,"carbs":68.0,"fat":28.0},{"name":"7 Layer Burrito","kcal":480.0,"protein":16.0,"carbs":64.0,"fat":18.0},{"name":"Double Cheesy Black Bean Cravings Burrito","kcal":420.0,"protein":14.0,"carbs":58.0,"fat":14.0},{"name":"Beefy Nacho Cravings Burrito","kcal":510.0,"protein":18.0,"carbs":60.0,"fat":22.0},{"name":"Spicy Chicken Cravings Burrito","kcal":480.0,"protein":20.0,"carbs":56.0,"fat":20.0},{"name":"Cheesy Roll-up","kcal":180.0,"protein":8.0,"carbs":18.0,"fat":8.0},{"name":"Cheese Quesadilla","kcal":460.0,"protein":18.0,"carbs":42.0,"fat":23.0},{"name":"Chalupa Supreme","kcal":350.0,"protein":13.0,"carbs":32.0,"fat":18.0},{"name":"Cheesy Gordita Crunch","kcal":490.0,"protein":17.0,"carbs":41.0,"fat":27.0},{"name":"Mini Quesadilla","kcal":190.0,"protein":8.0,"carbs":18.0,"fat":10.0},{"name":"2 Crispy Chicken Strips","kcal":280.0,"protein":18.0,"carbs":22.0,"fat":14.0},{"name":"3 Crispy Chicken Tenders with Dip","kcal":420.0,"protein":27.0,"carbs":33.0,"fat":21.0},{"name":"5 Crispy Chicken Tenders with Dip","kcal":700.0,"protein":45.0,"carbs":55.0,"fat":35.0},{"name":"Cheesy Topped Nachos","kcal":480.0,"protein":10.0,"carbs":52.0,"fat":26.0},{"name":"Nachos Bell Grande","kcal":620.0,"protein":18.0,"carbs":62.0,"fat":34.0},{"name":"Seasoned Nachos","kcal":350.0,"protein":5.0,"carbs":44.0,"fat":18.0},{"name":"Black Beans","kcal":120.0,"protein":7.0,"carbs":22.0,"fat":1.0},{"name":"Seasoned Rice","kcal":180.0,"protein":3.0,"carbs":32.0,"fat":4.0},{"name":"Sour Cream","kcal":60.0,"protein":1.0,"carbs":2.0,"fat":6.0},{"name":"Nacho Cheese Sauce","kcal":80.0,"protein":2.0,"carbs":4.0,"fat":6.0},{"name":"Jalapenos","kcal":5.0,"protein":0.0,"carbs":1.0,"fat":0.0},{"name":"Guacamole","kcal":45.0,"protein":1.0,"carbs":3.0,"fat":4.0},{"name":"Deluxe Glazed Churros","kcal":240.0,"protein":2.0,"carbs":31.0,"fat":12.0},{"name":"Cinnamon Twists","kcal":170.0,"protein":1.0,"carbs":26.0,"fat":7.0},{"name":"Churros with Dip","kcal":310.0,"protein":3.0,"carbs":42.0,"fat":15.0},{"name":"Grande Cinnamon Twists","kcal":340.0,"protein":2.0,"carbs":52.0,"fat":14.0},{"name":"Churros Sharer","kcal":480.0,"protein":4.0,"carbs":62.0,"fat":24.0},{"name":"Caramel Dip","kcal":90.0,"protein":0.0,"carbs":18.0,"fat":2.0},{"name":"Crispy Chicken Griller","kcal":520.0,"protein":24.0,"carbs":48.0,"fat":26.0},{"name":"Beefy Griller","kcal":490.0,"protein":22.0,"carbs":42.0,"fat":24.0},{"name":"Chicken Mexi Melt","kcal":310.0,"protein":18.0,"carbs":28.0,"fat":14.0},{"name":"Izzy Cheezy","kcal":280.0,"protein":12.0,"carbs":32.0,"fat":12.0},{"name":"Fajita Burrito Menu Chicken","kcal":480.0,"protein":22.0,"carbs":58.0,"fat":16.0},{"name":"Fajita Burrito Menu Beef","kcal":530.0,"protein":20.0,"carbs":56.0,"fat":20.0}];
+const MCD_BREAKFAST_ITEMS=[{"name":"Breakfast Wrap with Brown Sauce","kcal":666.0,"protein":35.0,"carbs":53.0,"fat":34.0},{"name":"Breakfast Wrap with Ketchup","kcal":661.0,"protein":35.0,"carbs":52.0,"fat":34.0},{"name":"Cheesy Bacon Flatbread","kcal":280.0,"protein":14.0,"carbs":28.0,"fat":12.0},{"name":"Mighty McMuffin Tomato Ketchup","kcal":516.0,"protein":35.0,"carbs":30.0,"fat":28.0},{"name":"Mighty McMuffin Brown Sauce","kcal":518.0,"protein":35.0,"carbs":31.0,"fat":28.0},{"name":"Breakfast Roll with Ketchup","kcal":497.0,"protein":31.0,"carbs":42.0,"fat":22.0},{"name":"Breakfast Roll with Brown Sauce","kcal":501.0,"protein":31.0,"carbs":43.0,"fat":22.0},{"name":"Double Sausage & Egg McMuffin","kcal":552.0,"protein":36.0,"carbs":28.0,"fat":33.0},{"name":"New Bacon Roll Tomato Ketchup","kcal":332.0,"protein":21.0,"carbs":40.0,"fat":9.2},{"name":"New Bacon Roll Brown Sauce","kcal":336.0,"protein":21.0,"carbs":42.0,"fat":9.1},{"name":"Pancake Syrup 40g","kcal":132.0,"protein":0.0,"carbs":33.0,"fat":0.1},{"name":"The Caesar & Bacon Chicken One Grilled","kcal":403.0,"protein":32.0,"carbs":38.0,"fat":13.0},{"name":"Chicken McNuggets 9 pieces","kcal":391.0,"protein":22.0,"carbs":31.0,"fat":19.0},{"name":"20 Chicken McNuggets ShareBox","kcal":869.0,"protein":50.0,"carbs":68.0,"fat":43.0},{"name":"Chicken Selects 3 pieces","kcal":336.0,"protein":23.0,"carbs":22.0,"fat":17.0},{"name":"Chicken Selects 5 pieces","kcal":560.0,"protein":39.0,"carbs":36.0,"fat":28.0},{"name":"Chicken McNuggets 6 pieces","kcal":261.0,"protein":15.0,"carbs":21.0,"fat":13.0},{"name":"Mozzarella Dippers","kcal":248.0,"protein":9.7,"carbs":22.0,"fat":13.0},{"name":"Mozzarella Dippers Sharebox 9 pieces","kcal":744.0,"protein":29.0,"carbs":67.0,"fat":39.0},{"name":"Fries Small","kcal":237.0,"protein":2.3,"carbs":29.0,"fat":12.0},{"name":"Fries Medium","kcal":337.0,"protein":3.3,"carbs":42.0,"fat":17.0},{"name":"Fries Large","kcal":444.0,"protein":4.4,"carbs":55.0,"fat":22.0},{"name":"Shaker Side Salad","kcal":58.0,"protein":1.2,"carbs":3.8,"fat":4.0},{"name":"Veggie Dippers 4 pieces","kcal":321.0,"protein":6.6,"carbs":41.0,"fat":13.0}];
+const CATALOG=[
+ ...GREGGS_OFFICIAL_ITEMS.map(x=>({...x,brand:'Greggs UK',source:GREGGS_SOURCE,quality:'official UK'})),
+ ...NANDOS_CHIPS_ITEMS.map(x=>({...x,brand:'Nando’s UK',source:NANDOS_CHIPS_SOURCE,quality:'independent UK reference'})),
+ ...PEPE_UK_ITEMS.map(x=>({...x,brand:'Pepe’s UK',source:PEPE_UK_SOURCE,quality:'official UK'})),
+ ...MCD_BURGERS.map(x=>({...x,brand:'McDonald’s UK',source:MCD_INDEPENDENT_SOURCE,quality:'independent UK reference'})),
+ ...MCD_BREAKFAST_ITEMS.map(x=>({...x,brand:'McDonald’s UK',source:MCD_INDEPENDENT_SOURCE,quality:'independent UK reference'})),
+ ...TACO_INDEPENDENT_ITEMS.map(x=>({...x,brand:'Taco Bell UK',source:TACO_INDEPENDENT_SOURCE,quality:'independent UK reference (not officially verified)'})),
+ ...KFC_UK_ITEMS.map(x=>({...x,brand:'KFC UK',source:KFC_SOURCE,quality:'official UK'})),
+ ...EXTRA_OFFICIAL_ITEMS.map(x=>({...x,brand:'Pret',source:x.url,quality:'official UK'}))
+];
+function menuNormalize(s){
+ return normItem(s).replace(/\b(?:from|at|of|please|one|item)\b/g,' ')
+ .replace(/\b(cheeseburgers|burgers|burritos|tacos|wraps|nuggets|sandwiches|muffins|fries)\b/g,(w)=>({cheeseburgers:'cheeseburger',burgers:'burger',burritos:'burrito',tacos:'taco',wraps:'wrap',nuggets:'nugget',sandwiches:'sandwich',muffins:'muffin',fries:'fries'})[w])
+ .replace(/\s+/g,' ').trim();
+}
+const MENU_CHAINS=[
+ {re:/\b(?:mcdonald['’]?s|mcdonalds|maccies|macdonalds)\b/ig,brand:'McDonald’s UK'},
+ {re:/\b(?:pepe['’]?s|pepes)(?:\s+piri\s+piri)?\b/ig,brand:'Pepe’s UK'},
+ {re:/\btaco\s*bell\b/ig,brand:'Taco Bell UK'},
+ {re:/\bk\s*f\s*c\b/ig,brand:'KFC UK'},
+ {re:/\bpret(?:\s+a\s+manger)?\b/ig,brand:'Pret'},
+ {re:/\bgreggs\b/ig,brand:'Greggs UK'},
+ {re:/\bnando['’]?s\b/ig,brand:'Nando’s UK'}
+];
+function parseMenuQuery(input){
+ let term=input.trim().toLowerCase().replace(/[’]/g,"'");
+ let brand=null;
+ for(const c of MENU_CHAINS){c.re.lastIndex=0;if(c.re.test(term)){brand=c.brand;c.re.lastIndex=0;term=term.replace(c.re,' ');break;}}
+ term=menuNormalize(term);
+ const isExactProduct=CATALOG.some(r=>(!brand||r.brand===brand)&&menuNormalize(r.name)===term);
+ const pre=isExactProduct?null:term.match(/^(\d{1,2})\s+(.+)$/);
+ let count=1;if(pre){count=Number(pre[1]);term=pre[2];}
+ const post=term.match(/^(.+?)\s+(?:x\s*)?(\d{1,2})$/);
+ if(post){if(pre)return {brand,count:0,term};count=Number(post[2]);term=post[1];}
+ return {brand,count,term};
+}
+function wordSignature(s){return menuNormalize(s).split(' ').filter(Boolean).sort().join(' ');}
+function menuFind(input){
+ const q=parseMenuQuery(input);
+ if(q.count<1||q.count>30)return {status:'invalid',q};
+ const pool=CATALOG.filter(r=>!q.brand||r.brand===q.brand);
+ // Strict matching first, then unordered words; never select a partial match automatically.
+ let options=pool.filter(r=>menuNormalize(r.name)===q.term || (r.aliases||[]).some(a=>menuNormalize(a)===q.term));
+ if(!options.length)options=pool.filter(r=>wordSignature(r.name)===wordSignature(q.term));
+ // An unspecified 'sausage roll' is not necessarily Greggs; require the chain for generic names.
+ if(!q.brand)options=options.filter(r=>!(r.brand==='Greggs UK'&&menuNormalize(r.name)==='sausage roll'));
+ // Duplicate imports of the same item at one chain do not create artificial ambiguity.
+ const unique=[];for(const r of options){if(!unique.some(x=>x.brand===r.brand&&menuNormalize(x.name)===menuNormalize(r.name)))unique.push(r);}
+ if(unique.length===1)return {status:'matched',q,r:unique[0]};
+ if(unique.length>1)return {status:'ambiguous',q,options:unique.slice(0,8)};
+ const qwords=new Set(q.term.split(' ').filter(Boolean));
+ const ranked=pool.map(r=>{const words=new Set(menuNormalize(r.name).split(' ').filter(Boolean));let intersection=0;for(const x of qwords)if(words.has(x))intersection++;const score=intersection/(qwords.size+words.size-intersection||1);return {r,score};}).filter(x=>x.score>=0.45).sort((a,b)=>b.score-a.score);
+ return {status:'missing',q,options:ranked.slice(0,5).map(x=>x.r)};
+}
+function matchMenuRecord(input){
+ const m=menuFind(input);
+ if(m.status!=='matched')return m.status==='missing'&&!m.q.brand?undefined:null;
+ const {r,q}=m;const n=q.count;
+ return {name:nice(input),kcal:Math.round(r.kcal*n),protein:Math.round(r.protein*n*10)/10,carbs:Math.round(r.carbs*n*10)/10,fat:Math.round(r.fat*n*10)/10,sourceType:r.quality.startsWith('official')?'official':'independent',sourceUrl:r.source,sourceLabel:r.brand+' '+r.name,warning:`${r.quality}. ${n} × ${r.name}. Extras not included unless named.`};
+}
+function showMenuSuggestions(input){
+ const info=menuFind(input), el=$('suggestions');if(!el)return;
+ el.replaceChildren();
+ const title=document.createElement('p');title.style.cssText='font-size:13px;color:#e4c9aa;margin:9px 0';
+ title.textContent=info.status==='ambiguous'?'Several products match. Select the correct chain:':'No exact match. Try a product below or enter nutritional values manually:';
+ el.appendChild(title);
+ for(const r of (info.options||[])){
+  const btn=document.createElement('button');btn.type='button';btn.textContent=`${r.brand} — ${r.name} (${r.kcal} kcal)`;
+  btn.style.cssText='width:100%;text-align:left;padding:9px;background:#33332f;color:#fff;border:1px solid #53534c;border-radius:8px;margin:3px 0';
+  btn.onclick=()=>{$('mealText').value=`${info.q.count>1?info.q.count+' ':''}${r.brand} ${r.name}`;$('suggestions').replaceChildren();$('mealText').focus();};el.appendChild(btn);
+ }
+ const manual=document.createElement('button');manual.type='button';manual.textContent='Enter macros manually';manual.style.cssText='width:100%;padding:10px;margin-top:7px;background:#3e544a;color:white;border:1px solid #5d9477;border-radius:9px';manual.onclick=()=>manualAdd(input);el.appendChild(manual);
+}
+function manualAdd(text){
+ const field=(label)=>{let v=prompt(label+' for '+text+' (leave blank to cancel):');if(v===null||!v.trim())return null;let n=Number(v);return Number.isFinite(n)&&n>=0&&n<=20000?n:null;};
+ const kcal=field('Calories (kcal)');if(kcal===null)return;
+ const protein=field('Protein (g)');if(protein===null)return;
+ const carbs=field('Carbs (g)');if(carbs===null)return;
+ const fat=field('Fat (g)');if(fat===null)return;
+ meals.unshift({id:globalThis.crypto?.randomUUID?.()||String(Date.now())+Math.random(),date:day,name:nice(text),kcal,protein,carbs,fat});persist();render();$('mealText').value='';$('suggestions').replaceChildren();showMessage('Saved using the values you entered.');
+}
+function buildCoverage(){
+ const ul=document.getElementById('verifiedMenu');if(!ul)return;
+ const groups=['McDonald’s UK','KFC UK','Pepe’s UK','Taco Bell UK','Pret','Greggs UK','Nando’s UK'];
+ ul.innerHTML=groups.map(b=>{
+  const rr=CATALOG.filter(x=>x.brand===b);
+  let link=rr[0]?.source||'#';
+  return `<li style="margin:12px 0"><strong>${esc(b)}: ${rr.length} items</strong> <a href="${link}" target="_blank" rel="noopener" style="color:#9edec2">Source</a><ul style="padding-left:18px">${rr.map(r=>`<li style="margin:6px 0">${esc(r.name)} — ${r.kcal} kcal · P ${r.protein}g · C ${r.carbs}g · F ${r.fat}g</li>`).join('')}</ul></li>`;
+ }).join('');
+}
+document.addEventListener('DOMContentLoaded',buildCoverage);
+
+function localEstimate(input){const cleaned=input.trim();const chunks=cleaned.split(/,|\s+\band\b\s+|\s+\bwith\b\s+|\s*\+\s*/i).map(s=>s.trim()).filter(Boolean);let sum={kcal:0,protein:0,carbs:0,fat:0},found=0;const unmatched=[];
+ for(const chunk of chunks){const food=lookup(chunk);if(!food){unmatched.push(chunk);continue;}const n=serving(chunk,food);sum.kcal+=food.k*n;sum.protein+=food.p*n;sum.carbs+=food.c*n;sum.fat+=food.f*n;found++;}
+ if(!found)return null;
+ return {name:nice(cleaned),kcal:round(sum.kcal),protein:round(sum.protein*10)/10,carbs:round(sum.carbs*10)/10,fat:round(sum.fat*10)/10,sourceType:'estimate',warning:unmatched.length?`Rough estimate; some ingredients (${unmatched.join(', ')}) may be missing. Tap to edit.`:'Estimated from typical portions; tap to adjust.'};
+}
+function load(){try{const data=JSON.parse(localStorage.getItem(STORE));if(Array.isArray(data)){meals=data.filter(x=>x&&typeof x.date==='string'&&typeof x.name==='string').slice(0,5000).map(x=>({...x,kcal:finite(x.kcal),protein:finite(x.protein),carbs:finite(x.carbs),fat:finite(x.fat)}));return;}}catch(e){}
+// New installations start with an empty diary; previously saved meals are never overwritten.
+meals=[];persist();}
+function persist(){try{localStorage.setItem(STORE,JSON.stringify(meals));}catch(e){}}
+const OIL_SETTINGS='macro-log-oil-settings-v1';
+try{const o=JSON.parse(localStorage.getItem(OIL_SETTINGS)||'{}');if(typeof o.enabled==='boolean')$('autoOil').checked=o.enabled;if(Number.isFinite(o.grams)&&o.grams>=0&&o.grams<=100)$('oilGrams').value=o.grams;}catch(e){}
+function oilSettings(){const grams=Number($('oilGrams').value);return {enabled:$('autoOil').checked,grams:Number.isFinite(grams)?Math.max(0,Math.min(100,grams)):5};}
+function saveOilSettings(){try{localStorage.setItem(OIL_SETTINGS,JSON.stringify(oilSettings()));}catch(e){}}
+$('autoOil').addEventListener('change',saveOilSettings);$('oilGrams').addEventListener('change',saveOilSettings);
+function needsCookingOil(text){
+ const t=text.toLowerCase();
+ // No automatic oil on packaged, named restaurant meals, existing oil or non-fried methods.
+ if(/\b(mcdonald|mcdonalds|kfc|nandos|nando.s|pepes|pepe.s|taco bell|pret|burger king|popeyes|greggs|subway|five guys|dominos|starbucks|costa)\b/i.test(t))return false;
+ if(/\b(boiled|poached|steamed|air.?fried|oven.?baked|grilled|raw|hard.?boiled|soft.?boiled|without oil|no oil|rapeseed oil|rape seed oil|olive oil|vegetable oil|sunflower oil|coconut oil|butter|ghee)\b/i.test(t))return false;
+ return /\b(steaks?|bacon|rashers?|eggs?|scrambled eggs?|fried eggs?)\b/i.test(t);
+}
+function makeCookingOil(parentId,g){return {id:globalThis.crypto?.randomUUID?.()||String(Date.now())+Math.random(),date:day,name:`Rapeseed oil (${g}g)`,kcal:Math.round(g*8.84),protein:0,carbs:0,fat:g,oilFor:parentId,oilGrams:g,sourceType:'estimate'};}
+
+const UNDO_STORE='macro-log-undo-v1';
+let undoHistory=[];
+try{const saved=JSON.parse(sessionStorage.getItem(UNDO_STORE)||'[]');if(Array.isArray(saved))undoHistory=saved.filter(x=>x&&Array.isArray(x.removed)&&typeof x.label==='string').slice(-20);}catch(e){}
+function rememberDeletion(removed,label){if(!removed.length)return;undoHistory.push({removed:removed.map(x=>({index:x.index,meal:{...x.meal}})),label});undoHistory=undoHistory.slice(-20);saveUndo();}
+function saveUndo(){try{sessionStorage.setItem(UNDO_STORE,JSON.stringify(undoHistory));}catch(e){}}
+function undoDeletion(){const action=undoHistory.pop();if(!action)return;for(const item of [...action.removed].sort((a,b)=>a.index-b.index)){if(!meals.some(m=>m.id===item.meal.id))meals.splice(Math.min(item.index,meals.length),0,item.meal);}saveUndo();persist();render();showMessage('Restored: '+action.label);}
+function showMessage(str,kind='info'){const el=$('message');el.textContent=str;el.style.color=kind==='error'?'#f68c85':'#b9d6c4';el.classList.toggle('visible',!!str);}
+function render(){const todays=meals.filter(m=>m.date===day);const total=todays.reduce((a,m)=>{a.kcal+=m.kcal;a.protein+=m.protein;a.carbs+=m.carbs;a.fat+=m.fat;return a;},{kcal:0,protein:0,carbs:0,fat:0});$('kcal').textContent=round(total.kcal).toLocaleString();$('protein').textContent=`${round(total.protein)}g`;$('carbs').textContent=`${round(total.carbs)}g`;$('fat').textContent=`${round(total.fat)}g`;
+ const yesterday=shift(todayKey(),-1);$('dayLabel').textContent=day===todayKey()?'Today':day===yesterday?'Yesterday':new Date(day+'T12:00:00').toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'});$('nextDay').disabled=day>=todayKey();$('clearDay').disabled=!todays.length;$('undoDelete').disabled=!undoHistory.length;$('undoDelete').title=undoHistory.length?'Undo: '+undoHistory[undoHistory.length-1].label:'Nothing to undo';
+ const oilTotal=todays.filter(m=>m.oilFor).reduce((a,m)=>a+(Number(m.oilGrams)||0),0);$('oilDaily').style.display=oilTotal?'block':'none';$('oilDaily').textContent=oilTotal?`Rapeseed oil today: ${round(oilTotal*10)/10}g · ${Math.round(oilTotal*8.84)} kcal (included above)`:'';
+ $('mealList').innerHTML=todays.length?todays.map(m=>`<div class="meal"><div><button class="meal-detail" type="button" data-edit="${esc(m.id)}" aria-label="Edit ${esc(m.name)}"><div class="meal-name">${esc(m.name)}</div><div class="meal-meta">${round(m.kcal)} kcal · P ${round(m.protein)} · C ${round(m.carbs)} · F ${round(m.fat)}</div></button><div class="meal-source">${m.sourceType==='official'?'✓ Official published nutrition':m.sourceType==='independent'?'◉ Published independent reference':m.sourceType==='estimate'?'≈ Estimated (editable)':m.barcode?'◉ Barcode product data':m.oilFor?'≈ Oil estimate':'◉ Previously logged'}${safeSourceUrl(m.sourceUrl)?`<span class="source-dot">·</span><a href="${esc(safeSourceUrl(m.sourceUrl))}" target="_blank" rel="noopener noreferrer">View source ↗</a>`:''}</div></div><button class="delete" type="button" data-delete="${esc(m.id)}" aria-label="Delete ${esc(m.name)}">×</button></div>`).join(''):'<div class="empty">No food logged for this day yet.<br>Type a meal above to get started.</div>';
+}
+const LOOKUP_CODE_STORE='macro-log-nutrition-access-code';
+let searchAvailable=null;
+function lookupBanner(message,online=false){
+ $('lookupBanner').textContent=message;
+ $('lookupBanner').classList.toggle('offline',!online);
+}
+async function checkLiveSearch(){
+ const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),5000);
+ try{
+  const r=await fetch('/.netlify/functions/nutrition',{method:'GET',headers:{'Accept':'application/json'},signal:ctrl.signal});
+  if(!r.ok)throw new Error('No nutrition search endpoint');
+  const x=await r.json();
+  if(x?.liveSearchReady){searchAvailable=true;lookupBanner('Online nutrition search ready · Official → published → estimate',true);$('lookupStatus').textContent=x.accessCodeRequired?'Live search is installed. Add your private access code below to use it.':'Live search is installed and ready.';}
+  else {searchAvailable=false;lookupBanner('Live search not configured · Saved nutrition + estimates only');}
+ }catch(e){searchAvailable=false;lookupBanner('Live search not connected · Saved nutrition + estimates only');}
+ finally{clearTimeout(timer);}
+}
+try{$('lookupPasscode').value=localStorage.getItem(LOOKUP_CODE_STORE)||'';}catch(e){}
+$('saveLookupPasscode').addEventListener('click',()=>{try{localStorage.setItem(LOOKUP_CODE_STORE,$('lookupPasscode').value.trim());}catch(e){}$('lookupStatus').textContent='Access code saved in this browser; it is sent only to your nutrition lookup function.';checkLiveSearch();});
+checkLiveSearch();
+function isNumberMacros(x){return x&&['kcal','protein','carbs','fat'].every(k=>Number.isFinite(x[k])&&x[k]>=0&&x[k]<=10000);}
+function safeSourceUrl(s){try{const u=new URL(s);return u.protocol==='https:'?u.href:'';}catch(e){return '';}}
+function sourceTypeForCached(x){
+ if(!x)return null;
+ if(x.sourceType)return x.sourceType;
+ if(/official uk|official nutrition/i.test(x.warning||''))return 'official';
+ if(/independent/i.test(x.warning||''))return 'independent';
+ return 'estimate';
+}
+function roughFoodEstimate(input){
+ const t=input.toLowerCase(),qty=(t.match(/^\s*(\d{1,2})\s+(?=[a-z])/)||[])[1];
+ const n=qty?Math.min(15,Math.max(1,Number(qty))):1;
+ // Starting points for one typical serving. These are *not* claims about a brand's nutritional information.
+ const templates=[
+ [/sausage\s*roll/, {kcal:350,protein:10,carbs:25,fat:24}],
+ [/peri[ -]?peri.*(?:chips|fries)|(?:chips|fries).*peri[ -]?peri/, {kcal:440,protein:6,carbs:55,fat:21}],
+ [/\b(?:chips|fries|wedges)\b/, {kcal:450,protein:5,carbs:58,fat:21}],
+ [/\b(?:burger|big mac|whopper)\b/, {kcal:540,protein:27,carbs:44,fat:29}],
+ [/\b(?:burrito|crunchwrap)\b/, {kcal:600,protein:24,carbs:66,fat:26}],
+ [/\b(?:wrap|pitta|pita|sandwich|baguette|sub)\b/, {kcal:430,protein:23,carbs:48,fat:16}],
+ [/\b(?:fried chicken|chicken wings|popcorn chicken)\b/, {kcal:500,protein:34,carbs:30,fat:28}],
+ [/\b(?:pizza|calzone)\b/, {kcal:710,protein:30,carbs:80,fat:30}],
+ [/\b(?:nuggets|tenders|strips)\b/, {kcal:350,protein:23,carbs:23,fat:18}],
+ [/\b(?:taco|quesadilla|nachos)\b/, {kcal:410,protein:18,carbs:38,fat:21}],
+ [/\b(?:salad|bowl)\b/, {kcal:350,protein:20,carbs:30,fat:16}],
+ [/\b(?:curry|rice bowl|stir fry)\b/, {kcal:590,protein:27,carbs:62,fat:24}],
+ [/\b(?:pasta|lasagne|mac\s*and\s*cheese)\b/, {kcal:630,protein:22,carbs:75,fat:27}],
+ [/\b(?:soup|broth)\b/, {kcal:235,protein:12,carbs:26,fat:9}],
+ [/\b(?:donut|doughnut|cookie|brownie|muffin|cake|pastry|pie)\b/, {kcal:370,protein:5,carbs:48,fat:17}],
+ [/\b(?:ice cream|sundae|milkshake|mcflurry)\b/, {kcal:420,protein:9,carbs:61,fat:16}],
+ [/\b(?:coffee|latte|cappuccino|tea)\b/, {kcal:100,protein:5,carbs:11,fat:4}],
+ [/\b(?:water|diet coke|coke zero|pepsi max|zero sugar)\b/, {kcal:0,protein:0,carbs:0,fat:0}],
+ [/\b(?:coke|cola|lemonade|juice|fanta|sprite|pepsi)\b/, {kcal:140,protein:0,carbs:35,fat:0}],
+ [/\b(?:egg|eggs|steak|bacon|sausage|chicken|fish|beef|pork|tofu)\b/, {kcal:320,protein:28,carbs:7,fat:20}]
+ ];
+ const base=templates.find(x=>x[0].test(t))?.[1]||{kcal:450,protein:20,carbs:48,fat:20};
+ const scale=(/\blarge\b/.test(t)?1.25:/\bsmall\b/.test(t)?0.75:1)*n;
+ return {name:nice(input),kcal:Math.round(base.kcal*scale),protein:oneDec(base.protein*scale),carbs:oneDec(base.carbs*scale),fat:oneDec(base.fat*scale),sourceType:'estimate',warning:'Rough estimate from a typical serving, not verified restaurant nutrition. Tap the entry to edit calories, protein, carbs and fat.'};
+}
+async function liveNutritionLookup(text){
+ if(searchAvailable===false)return null;
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),24500);
+ try{
+  const access=$('lookupPasscode').value.trim();
+  const response=await fetch('/.netlify/functions/nutrition',{method:'POST',headers:{'Content-Type':'application/json',...(access?{'X-Access-Token':access}:{})},body:JSON.stringify({text:text.slice(0,350)}),signal:controller.signal});
+  if(!response.ok){searchAvailable=false;lookupBanner(response.status===401?'Live search needs the correct access code · Using saved nutrition/estimates':'Live search unavailable · Using saved nutrition/estimates');$('lookupStatus').textContent=response.status===401?'Live lookup: access code required or incorrect.':'Live nutrition search failed or is not configured.';return null;}
+  const x=await response.json();
+  if(!isNumberMacros(x))return null;
+  searchAvailable=true;lookupBanner('Online nutrition search ready · Official → published → estimate',true);
+  $('lookupStatus').textContent='Online lookup completed. Official restaurant data was prioritised.';
+  const sourceUrl=safeSourceUrl(x.sourceUrl);
+  const kind=sourceUrl&&['official','independent'].includes(x.sourceType)?x.sourceType:'estimate';
+  return {name:String(x.name||nice(text)).slice(0,120),kcal:round(x.kcal),protein:oneDec(x.protein),carbs:oneDec(x.carbs),fat:oneDec(x.fat),sourceType:kind,sourceUrl:kind==='estimate'?'':sourceUrl,sourceLabel:String(x.sourceLabel||'Nutrition source').slice(0,120),warning:kind==='official'?'Official published nutrition found online; check the portion/variant.':kind==='independent'?'Published nutritional reference (not the brand’s own website). Check portion/variant.':(x.note||'AI estimate from a typical serving; tap to edit.')};
+ }catch(e){searchAvailable=false;lookupBanner('Live search unavailable · Using saved nutrition/estimates');$('lookupStatus').textContent='Live lookup unavailable. Using saved food data or an editable estimate.';return null;}
+ finally{clearTimeout(timer);}
+}
+async function estimate(text){
+ // First attempt a fresh online search for EVERY typed meal (when server search is connected).
+ const found=await liveNutritionLookup(text);
+ if(found?.sourceType==='official')return found;
+ // If no live official data, prefer a matching bundled official product over any
+ // non-official web result. This also works when the user is offline.
+ const known=matchMenuRecord(text);
+ const legacy=officialItemEstimate(text);
+ const catalogued=legacy===undefined?restaurantEstimate(text):legacy;
+ const cached=known||catalogued;
+ if(cached&&!cached.sourceUrl&&cached===catalogued){const match=VERIFIED_RESTAURANT.find(x=>x.keys.test(text)&&x.item.test(text));if(match)cached.sourceUrl=match.url;}
+ if(cached&&sourceTypeForCached(cached)==='official')return {...cached,sourceType:'official'};
+ if(catalogued&&sourceTypeForCached(catalogued)==='official')return {...catalogued,sourceType:'official'};
+ // Other documented online values come next, followed by bundled independent references.
+ if(found?.sourceType==='independent')return found;
+ if(cached&&sourceTypeForCached(cached)==='independent')return {...cached,sourceType:'independent'};
+ if(catalogued&&sourceTypeForCached(catalogued)==='independent')return {...catalogued,sourceType:'independent'};
+ // Last resort: online estimate for the exact meal or local typical portion estimate.
+ if(found)return found;
+ return localEstimate(text)||roughFoodEstimate(text);
+}
+$('mealForm').addEventListener('submit',async e=>{e.preventDefault();const input=$('mealText'),txt=input.value.trim();if(!txt)return;const button=$('addMeal');button.disabled=true;button.textContent='Searching nutrition…';showMessage('');$('suggestions').replaceChildren();try{const result=await estimate(txt);if(!result){throw new Error('Nutrition calculation unavailable');}const entry={id:globalThis.crypto?.randomUUID?.()||String(Date.now())+Math.random(),date:day,...result};delete entry.warning;meals.unshift(entry);const settings=oilSettings();const addOil=settings.enabled&&settings.grams>0&&needsCookingOil(txt);if(addOil)meals.unshift(makeCookingOil(entry.id,settings.grams));persist();render();input.value='';showMessage((result.warning||((result.sourceType==='official')?'Official nutrition recorded.':'Estimated. Tap to edit.'))+(addOil?` Added ${settings.grams}g rapeseed oil separately (${Math.round(settings.grams*8.84)} kcal).`:''));}catch(error){const result=roughFoodEstimate(txt);const entry={id:globalThis.crypto?.randomUUID?.()||String(Date.now())+Math.random(),date:day,...result};delete entry.warning;meals.unshift(entry);persist();render();input.value='';showMessage('Estimated from a typical portion because the lookup failed. Tap the entry to edit.');}finally{button.disabled=false;button.textContent='Add meal';}});
+// Barcode lookups require internet access. Camera scanning requires HTTPS and permission.
+let barcodeProduct=null, scanner=null, cameraRunning=false, scanOpening=false, scanToken=0, barcodeLookupToken=0, scannerScriptPromise=null;
+const digitBarcode=s=>String(s||'').trim().replace(/\s/g,'');
+const numOrNull=n=>n===null||n===undefined||n===''||!Number.isFinite(Number(n))?null:Number(n);
+const oneDec=n=>Math.round((n+Number.EPSILON)*10)/10;
+function scanNotice(msg,error=false){const el=$('scanStatus');el.textContent=msg;el.classList.toggle('error',error);}
+function loadBarcodeScanner(){
+ if(window.Html5Qrcode)return Promise.resolve();
+ if(scannerScriptPromise)return scannerScriptPromise;
+ scannerScriptPromise=new Promise((resolve,reject)=>{
+  const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js';script.async=true;
+  script.onload=()=>window.Html5Qrcode?resolve():reject(new Error('Scanner unavailable'));
+  script.onerror=()=>reject(new Error('Unable to load the barcode scanner. Check your connection.'));
+  document.head.appendChild(script);
+ }).catch(err=>{scannerScriptPromise=null;throw err;});
+ return scannerScriptPromise;
+}
+async function stopCamera(){
+ scanToken++;
+ const old=scanner;scanner=null;cameraRunning=false;scanOpening=false;
+ $('scannerFrame').hidden=true;$('toggleCamera').disabled=false;$('toggleCamera').textContent='▥  Start camera';
+ if(old){try{if(old.isScanning)await old.stop();}catch(e){}try{old.clear();}catch(e){}}
+}
+function openBarcodeDialog(){barcodeProduct=null;$('productPreview').hidden=true;$('barcodeNumber').value='';scanNotice('');$('scanBackdrop').classList.add('open');}
+async function closeBarcodeDialog(){barcodeLookupToken++;$('scanBackdrop').classList.remove('open');await stopCamera();}
+async function toggleBarcodeCamera(){
+ if(cameraRunning||scanOpening){await stopCamera();scanNotice('Camera stopped.');return;}
+ if(!window.isSecureContext){scanNotice('Camera scanning requires a secure HTTPS website. You can enter the barcode number instead.',true);return;}
+ scanOpening=true;const token=++scanToken;$('toggleCamera').disabled=false;$('toggleCamera').textContent='Starting camera…';
+ scanNotice('Your browser may ask for camera permission. Allow access to scan the barcode.');
+ $('scannerFrame').hidden=false;
+ try{
+  await loadBarcodeScanner();
+  if(token!==scanToken)return;
+  const f=window.Html5QrcodeSupportedFormats;
+  const config={verbose:false,formatsToSupport:[f.EAN_13,f.EAN_8,f.UPC_A,f.UPC_E,f.CODE_128]};
+  const newScanner=new window.Html5Qrcode('barcodeReader',config);scanner=newScanner;
+  await newScanner.start({facingMode:'environment'},{fps:12,qrbox:{width:255,height:155}},code=>{
+   const digits=digitBarcode(code);
+   if(!/^\d{8,14}$/.test(digits)||token!==scanToken)return;
+   $('barcodeNumber').value=digits;
+   // Stop before lookup so the camera cannot trigger repeated scans.
+   stopCamera().then(()=>lookupBarcode(digits));
+  },()=>{});
+  if(token!==scanToken){if(newScanner.isScanning)await newScanner.stop();try{newScanner.clear();}catch(e){}return;}
+  scanOpening=false;cameraRunning=true;
+  $('toggleCamera').textContent='Stop camera';scanNotice('Aim at the barcode, in good light, until it is detected.');
+ }catch(err){await stopCamera();scanNotice('Unable to start camera. Check Safari camera permission, or enter the barcode number instead.',true);}
+}
+function normalizeProduct(code,p){
+ const n=p.nutriments||{};
+ let kcal=numOrNull(n['energy-kcal_100g']);
+ if(kcal===null){const kj=numOrNull(n['energy-kj_100g']??n['energy_100g']);if(kj!==null)kcal=kj/4.184;}
+ const protein=numOrNull(n['proteins_100g']);
+ const carbs=numOrNull(n['carbohydrates_100g']);
+ const fat=numOrNull(n['fat_100g']);
+ if([kcal,protein,carbs,fat].some(x=>x===null||x<0))return null;
+ const serving=numOrNull(p.serving_quantity);
+ const name=String(p.product_name_en||p.product_name||p.generic_name||`Product ${code}`).trim().slice(0,120);
+ return {code,name,brand:String(p.brands||'').slice(0,100),kcal,protein,carbs,fat,serving:serving>0&&serving<=10000?serving:null};
+}
+async function lookupBarcode(code){
+ const digits=digitBarcode(code);
+ if(!/^\d{8,14}$/.test(digits)){scanNotice('Enter a valid 8–14 digit barcode.',true);return;}
+ const lookupToken=++barcodeLookupToken;
+ barcodeProduct=null;$('productPreview').hidden=true;$('lookupBarcode').disabled=true;
+ scanNotice('Looking up the product…');
+ try{
+  const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),13000);
+  let response;
+  try{response=await fetch(`https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(digits)}?fields=code,product_name,product_name_en,generic_name,brands,serving_quantity,nutriments`,{signal:controller.signal,headers:{'Accept':'application/json'}});}finally{clearTimeout(timeout);}
+  if(lookupToken!==barcodeLookupToken)return;
+  if(!response.ok)throw new Error('lookup failed');
+  const data=await response.json();
+  if(lookupToken!==barcodeLookupToken)return;
+  if(data.status!==1||!data.product){scanNotice('Product not found in Open Food Facts. You can still add it by typing its name and nutrition in the main meal box.',true);return;}
+  const product=normalizeProduct(digits,data.product);
+  if(!product){scanNotice('This product has incomplete nutrition data. Check the pack label and use the normal meal entry or edit the values manually.',true);return;}
+  barcodeProduct=product;$('barcodeProductName').textContent=product.name;
+  $('barcodeProductBrand').textContent=product.brand?`${product.brand} · Barcode ${digits}`:`Barcode ${digits}`;
+  $('barcodeProductLink').href=`https://world.openfoodfacts.org/product/${encodeURIComponent(digits)}`;
+  $('portionGrams').value=String(product.serving||100);
+  $('portionServing').disabled=!product.serving;
+  $('portionServing').textContent=product.serving?`1 serving (${product.serving}g/ml)`:'Serving unavailable';
+  $('barcodePer100').textContent=`Per 100g/ml: ${round(product.kcal)} kcal · Protein ${oneDec(product.protein)}g · Carbs ${oneDec(product.carbs)}g · Fat ${oneDec(product.fat)}g`;
+  $('productPreview').hidden=false;updateProductMacros();
+  scanNotice('Product found. Check the amount eaten, then tap Add to day.');
+ }catch(e){if(lookupToken===barcodeLookupToken)scanNotice('Product lookup failed. Check your internet connection and try again.',true);}finally{if(lookupToken===barcodeLookupToken)$('lookupBarcode').disabled=false;}
+}
+function updateProductMacros(){
+ if(!barcodeProduct)return;
+ const amt=Number($('portionGrams').value),valid=Number.isFinite(amt)&&amt>0&&amt<=10000;
+ $('addBarcodeMeal').disabled=!valid;
+ const portion=valid?amt/100:0;
+ $('barcodeKcal').textContent=String(round(barcodeProduct.kcal*portion));
+ $('barcodeProtein').textContent=String(oneDec(barcodeProduct.protein*portion));
+ $('barcodeCarbs').textContent=String(oneDec(barcodeProduct.carbs*portion));
+ $('barcodeFat').textContent=String(oneDec(barcodeProduct.fat*portion));
+}
+$('openBarcode').addEventListener('click',openBarcodeDialog);
+$('closeBarcode').addEventListener('click',closeBarcodeDialog);
+$('scanBackdrop').addEventListener('click',e=>{if(e.target===$('scanBackdrop'))closeBarcodeDialog();});
+$('toggleCamera').addEventListener('click',toggleBarcodeCamera);
+$('barcodeForm').addEventListener('submit',e=>{e.preventDefault();stopCamera().then(()=>lookupBarcode($('barcodeNumber').value));});
+$('portionGrams').addEventListener('input',updateProductMacros);
+$('portion100').addEventListener('click',()=>{$('portionGrams').value='100';updateProductMacros();});
+$('portionServing').addEventListener('click',()=>{if(!barcodeProduct?.serving)return;$('portionGrams').value=barcodeProduct.serving;updateProductMacros();});
+$('addBarcodeMeal').addEventListener('click',()=>{
+ if(!barcodeProduct)return;
+ const g=Number($('portionGrams').value);if(!Number.isFinite(g)||g<=0||g>10000)return;
+ const ratio=g/100,p=barcodeProduct;
+ const entry={id:globalThis.crypto?.randomUUID?.()||String(Date.now())+Math.random(),date:day,name:`${p.name} (${g}g/ml)`.slice(0,120),kcal:round(p.kcal*ratio),protein:oneDec(p.protein*ratio),carbs:oneDec(p.carbs*ratio),fat:oneDec(p.fat*ratio),barcode:p.code,source:'Open Food Facts'};
+ meals.unshift(entry);persist();render();closeBarcodeDialog();showMessage(`Added ${p.name} to ${day===todayKey()?'today':$('dayLabel').textContent}. Check the label if exact values matter.`);
+});
+$('prevDay').addEventListener('click',()=>{day=shift(day,-1);render();showMessage('');});$('nextDay').addEventListener('click',()=>{if(day<todayKey())day=shift(day,1);render();showMessage('');});
+$('mealList').addEventListener('click',e=>{const del=e.target.closest('[data-delete]');if(del){const index=meals.findIndex(m=>m.id===del.dataset.delete);if(index<0)return;const item=meals[index];const linkedIds=new Set([item.id]);if(item.oilFor){}else meals.filter(m=>m.oilFor===item.id).forEach(m=>linkedIds.add(m.id));const removed=meals.map((meal,index)=>({index,meal})).filter(x=>linkedIds.has(x.meal.id));rememberDeletion(removed,item.name);meals=meals.filter(m=>!linkedIds.has(m.id));persist();render();showMessage('Removed '+item.name+'. Tap Undo to restore it.');return;}const edit=e.target.closest('[data-edit]');if(edit)openEdit(edit.dataset.edit);});
+$('clearDay').addEventListener('click',()=>{const removed=meals.map((meal,index)=>({meal,index})).filter(x=>x.meal.date===day);if(!removed.length)return;if(!confirm(`Clear all ${removed.length} meals for this day? You can undo this afterwards.`))return;rememberDeletion(removed,`cleared day (${removed.length} meals)`);meals=meals.filter(m=>m.date!==day);persist();render();showMessage('Day cleared. Tap Undo to restore every meal.');});
+$('undoDelete').addEventListener('click',undoDeletion);
+function openEdit(id){const m=meals.find(x=>x.id===id);if(!m)return;editingId=id;$('editName').value=m.name;$('editKcal').value=m.kcal;$('editProtein').value=m.protein;$('editCarbs').value=m.carbs;$('editFat').value=m.fat;$('editBackdrop').classList.add('open');$('editName').focus();}
+function closeEdit(){editingId=null;$('editBackdrop').classList.remove('open');}
+$('cancelEdit').addEventListener('click',closeEdit);$('editBackdrop').addEventListener('click',e=>{if(e.target===$('editBackdrop'))closeEdit();});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeEdit();if($('scanBackdrop').classList.contains('open'))closeBarcodeDialog();}});
+$('editForm').addEventListener('submit',e=>{e.preventDefault();const m=meals.find(x=>x.id===editingId);if(m){m.name=$('editName').value.trim().slice(0,120)||m.name;m.kcal=finite($('editKcal').value);m.protein=finite($('editProtein').value);m.carbs=finite($('editCarbs').value);m.fat=finite($('editFat').value);persist();render();}closeEdit();});
+$('exportData').addEventListener('click',()=>{const blob=new Blob([JSON.stringify({version:1,meals},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='macro-log-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+$('importData').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{const data=JSON.parse(await file.text());if(!Array.isArray(data.meals)||data.meals.length>5000)throw Error('invalid');const fresh=data.meals.filter(x=>x&&typeof x.name==='string'&&/^\d{4}-\d\d-\d\d$/.test(x.date)&&x.name.length<=120).map(x=>({id:String(x.id||Date.now()+Math.random()),date:x.date,name:x.name,kcal:finite(x.kcal),protein:finite(x.protein),carbs:finite(x.carbs),fat:finite(x.fat),sourceType:['official','independent','estimate'].includes(x.sourceType)?x.sourceType:undefined,sourceUrl:safeSourceUrl(x.sourceUrl),sourceLabel:typeof x.sourceLabel==='string'?x.sourceLabel.slice(0,120):''}));if(!confirm(`Replace your current log with ${fresh.length} imported meals?`))return;meals=fresh;persist();render();showMessage('Backup imported.');}catch(e){showMessage('Invalid backup file.','error');}finally{e.target.value='';}});
+load();render();if('serviceWorker' in navigator && location.protocol!=='file:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+})();
+</script>
+</body>
+</html>
